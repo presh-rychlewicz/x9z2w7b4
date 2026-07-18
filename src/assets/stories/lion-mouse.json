@@ -1,0 +1,56 @@
+{
+  "id": "lion-mouse",
+  "title": "The Lion and the Mouse",
+  "difficulty": "Beginner",
+  "synopsis": "A tiny mouse promises to help a mighty lion in exchange for his life. An inspiring tale of kindness.",
+  "sentences": [
+    "A mighty Lion lay sleeping in the jungle.",
+    "A small Mouse accidentally ran across the Lion's nose, waking him up.",
+    "Angry at being disturbed, the Lion placed his huge paw over the Mouse to crush him.",
+    "\"Please, King of the Jungle, spare my life!\" cried the Mouse.",
+    "\"If you let me go, I promise I will help you one day.\"",
+    "The Lion laughed at the idea of a tiny mouse helping him, but he felt generous and let the Mouse go.",
+    "Some weeks later, the Lion was captured by hunters.",
+    "They tied him to a tree with thick ropes while they went to search for a wagon.",
+    "Hearing the Lion's angry roars, the Mouse ran to the spot.",
+    "\"Do not worry, my friend,\" said the Mouse.",
+    "\"I will free you.\"",
+    "The Mouse began to gnaw at the thick ropes with his sharp teeth.",
+    "Soon, the ropes snapped, and the Lion was free.",
+    "\"You laughed when I promised to help,\" said the Mouse.",
+    "\"Now you see that even a tiny mouse can help a great lion.\"",
+    "Kindness is never wasted."
+  ],
+  "glossary": [
+    {
+      "word": "mighty",
+      "partOfSpeech": "adjective",
+      "definition": "Possessing great power, strength, or size.",
+      "example": "A mighty wind blew the roof off the small house."
+    },
+    {
+      "word": "disturbed",
+      "partOfSpeech": "verb",
+      "definition": "Interrupted someone's quiet, rest, or attention.",
+      "example": "The loud music disturbed my study session."
+    },
+    {
+      "word": "spare",
+      "partOfSpeech": "verb",
+      "definition": "To save someone from being hurt, killed, or punished.",
+      "example": "He begged the judge to spare him from going to prison."
+    },
+    {
+      "word": "generous",
+      "partOfSpeech": "adjective",
+      "definition": "Willing to give money, help, or kindness freely.",
+      "example": "The generous woman donated food to the poor."
+    },
+    {
+      "word": "gnaw",
+      "partOfSpeech": "verb",
+      "definition": "To bite or chew on something repeatedly.",
+      "example": "The puppy likes to gnaw on its chew toy."
+    }
+  ]
+}

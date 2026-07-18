@@ -12,7 +12,6 @@ import {
 import {
   Avatar,
   Box,
-  Button,
   Card,
   Chip,
   Divider,
@@ -23,7 +22,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
-import type { Story } from "../storiesData";
+import { DifficultyFilter, ProgressFilter } from "../constants/filters";
+import { uiLabel, uiText } from "../constants/uiText";
+import type { Story } from "../types/story";
+import AppButton from "./AppButton";
+import Translatable from "./Translatable";
 
 interface DashboardProps {
   stories: Story[];
@@ -37,12 +40,11 @@ export function Dashboard({
   completedStoryIds,
 }: DashboardProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<
-    "All" | "Beginner" | "Intermediate"
-  >("All");
-  const [selectedProgress, setSelectedProgress] = useState<
-    "All" | "Unread" | "Completed"
-  >("All");
+  const [selectedDifficulty, setSelectedDifficulty] =
+    useState<DifficultyFilter>(DifficultyFilter.All);
+  const [selectedProgress, setSelectedProgress] = useState<ProgressFilter>(
+    ProgressFilter.All,
+  );
 
   const filteredStories = useMemo(() => {
     return stories.filter((story) => {
@@ -51,13 +53,14 @@ export function Dashboard({
         story.synopsis.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesDifficulty =
-        selectedDifficulty === "All" || story.difficulty === selectedDifficulty;
+        selectedDifficulty === DifficultyFilter.All ||
+        story.difficulty === selectedDifficulty;
 
       const isCompleted = completedStoryIds.includes(story.id);
       const matchesProgress =
-        selectedProgress === "All" ||
-        (selectedProgress === "Completed" && isCompleted) ||
-        (selectedProgress === "Unread" && !isCompleted);
+        selectedProgress === ProgressFilter.All ||
+        (selectedProgress === ProgressFilter.Completed && isCompleted) ||
+        (selectedProgress === ProgressFilter.Unread && !isCompleted);
 
       return matchesSearch && matchesDifficulty && matchesProgress;
     });
@@ -116,7 +119,7 @@ export function Dashboard({
               letterSpacing: 1,
             }}
           >
-            ENGLISH LEARNING COMPANION
+            <Translatable>{uiText.dashboard.badge}</Translatable>
           </Typography>
         </Box>
 
@@ -133,7 +136,7 @@ export function Dashboard({
             WebkitTextFillColor: "transparent",
           }}
         >
-          Kids' Stories for English Learners
+          <Translatable>{uiText.dashboard.title}</Translatable>
         </Typography>
 
         <Typography
@@ -147,8 +150,7 @@ export function Dashboard({
             lineHeight: 1.6,
           }}
         >
-          Practice reading simple, engaging fables. Track your progress and
-          master new vocabulary terms.
+          <Translatable>{uiText.dashboard.subtitle}</Translatable>
         </Typography>
       </Box>
 
@@ -181,12 +183,12 @@ export function Dashboard({
               variant="body2"
               sx={{ fontWeight: "600", fontFamily: "Inter, sans-serif" }}
             >
-              Search
+              <Translatable>{uiText.dashboard.searchLabel}</Translatable>
             </Typography>
           </Box>
 
           <TextField
-            placeholder="Search fables..."
+            placeholder={uiText.dashboard.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             size="small"
@@ -217,17 +219,21 @@ export function Dashboard({
               variant="body2"
               sx={{ fontWeight: "600", fontFamily: "Inter, sans-serif" }}
             >
-              Level
+              <Translatable>{uiText.dashboard.levelLabel}</Translatable>
             </Typography>
           </Box>
 
           <ToggleButtonGroup
             value={selectedDifficulty}
             exclusive
-            onChange={(_, val) => val && setSelectedDifficulty(val)}
+            onChange={(_, val) => {
+              if (Object.values(DifficultyFilter).includes(val)) {
+                setSelectedDifficulty(val as DifficultyFilter);
+              }
+            }}
             orientation="vertical"
             size="small"
-            aria-label="difficulty filter"
+            aria-label={uiText.dashboard.difficultyAriaLabel}
             sx={{
               alignItems: "stretch",
               "& .MuiToggleButtonGroup-grouped": {
@@ -249,9 +255,15 @@ export function Dashboard({
               },
             }}
           >
-            <ToggleButton value="All">All Levels</ToggleButton>
-            <ToggleButton value="Beginner">Beginner</ToggleButton>
-            <ToggleButton value="Intermediate">Intermediate</ToggleButton>
+            <ToggleButton value={DifficultyFilter.All}>
+              {uiText.dashboard.difficultyAll}
+            </ToggleButton>
+            <ToggleButton value={DifficultyFilter.Beginner}>
+              {uiText.dashboard.difficultyBeginner}
+            </ToggleButton>
+            <ToggleButton value={DifficultyFilter.Intermediate}>
+              {uiText.dashboard.difficultyIntermediate}
+            </ToggleButton>
           </ToggleButtonGroup>
         </Box>
 
@@ -272,17 +284,21 @@ export function Dashboard({
               variant="body2"
               sx={{ fontWeight: "600", fontFamily: "Inter, sans-serif" }}
             >
-              Progress
+              <Translatable>{uiText.dashboard.progressLabel}</Translatable>
             </Typography>
           </Box>
 
           <ToggleButtonGroup
             value={selectedProgress}
             exclusive
-            onChange={(_, val) => val && setSelectedProgress(val)}
+            onChange={(_, val) => {
+              if (Object.values(ProgressFilter).includes(val)) {
+                setSelectedProgress(val as ProgressFilter);
+              }
+            }}
             orientation="vertical"
             size="small"
-            aria-label="progress filter"
+            aria-label={uiText.dashboard.progressAriaLabel}
             sx={{
               alignItems: "stretch",
               "& .MuiToggleButtonGroup-grouped": {
@@ -304,9 +320,15 @@ export function Dashboard({
               },
             }}
           >
-            <ToggleButton value="All">All Stories</ToggleButton>
-            <ToggleButton value="Unread">Unread</ToggleButton>
-            <ToggleButton value="Completed">Completed</ToggleButton>
+            <ToggleButton value={ProgressFilter.All}>
+              {uiText.dashboard.progressAll}
+            </ToggleButton>
+            <ToggleButton value={ProgressFilter.Unread}>
+              {uiText.dashboard.progressUnread}
+            </ToggleButton>
+            <ToggleButton value={ProgressFilter.Completed}>
+              {uiText.dashboard.progressCompleted}
+            </ToggleButton>
           </ToggleButtonGroup>
         </Box>
       </Paper>
@@ -320,7 +342,6 @@ export function Dashboard({
             return (
               <Card
                 key={story.id}
-                onClick={() => onSelectStory(story.id)}
                 sx={{
                   display: "flex",
                   flexDirection: { xs: "column", sm: "row" },
@@ -331,20 +352,9 @@ export function Dashboard({
                   borderColor: isCompleted ? "success.light" : "divider",
                   boxShadow: "none",
                   borderRadius: 4,
-                  cursor: "pointer",
+                  cursor: "default",
                   position: "relative",
                   overflow: "hidden",
-                  transition:
-                    "transform 0.2s, border-color 0.2s, box-shadow 0.2s",
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    borderColor: "primary.main",
-                    boxShadow: "0 8px 24px rgba(170, 59, 255, 0.08)",
-                    "& .chevron-icon": {
-                      transform: "translateX(4px)",
-                      color: "primary.main",
-                    },
-                  },
                 }}
               >
                 {/* Completion accent bar */}
@@ -405,11 +415,11 @@ export function Dashboard({
                           letterSpacing: "-0.01em",
                         }}
                       >
-                        {story.title}
+                        <Translatable>{story.title}</Translatable>
                       </Typography>
 
                       <Chip
-                        label={story.difficulty}
+                        label={<Translatable>{story.difficulty}</Translatable>}
                         size="small"
                         sx={{
                           fontWeight: "700",
@@ -429,7 +439,11 @@ export function Dashboard({
                               style={{ fontSize: 14, color: "#2e7d32" }}
                             />
                           }
-                          label="Completed"
+                          label={
+                            <Translatable>
+                              {uiText.dashboard.cardCompleted}
+                            </Translatable>
+                          }
                           size="small"
                           color="success"
                           variant="outlined"
@@ -446,7 +460,11 @@ export function Dashboard({
                               style={{ fontSize: 14, color: "#666" }}
                             />
                           }
-                          label="Unread"
+                          label={
+                            <Translatable>
+                              {uiText.dashboard.cardUnread}
+                            </Translatable>
+                          }
                           size="small"
                           variant="outlined"
                           sx={{
@@ -468,7 +486,7 @@ export function Dashboard({
                         maxWidth: 800,
                       }}
                     >
-                      {story.synopsis}
+                      <Translatable>{story.synopsis}</Translatable>
                     </Typography>
 
                     {/* Metadata row */}
@@ -483,15 +501,15 @@ export function Dashboard({
                       {[
                         {
                           icon: <AccessTime sx={{ fontSize: 16 }} />,
-                          label: `${story.readingTimeMin} min read`,
+                          label: uiLabel.minRead(story.readingTimeMin),
                         },
                         {
                           icon: <Layers sx={{ fontSize: 16 }} />,
-                          label: `${story.wordCount} words`,
+                          label: uiLabel.wordCount(story.wordCount),
                         },
                         {
                           icon: <MenuBook sx={{ fontSize: 16 }} />,
-                          label: `${story.glossary.length} vocab words`,
+                          label: uiLabel.vocabWordCount(story.glossary.length),
                         },
                       ].map(({ icon, label }) => (
                         <Box
@@ -512,7 +530,7 @@ export function Dashboard({
                               fontFamily: "Inter, system-ui, sans-serif",
                             }}
                           >
-                            {label}
+                            <Translatable>{label}</Translatable>
                           </Typography>
                         </Box>
                       ))}
@@ -530,14 +548,13 @@ export function Dashboard({
                     pl: { sm: 3 },
                   }}
                 >
-                  <Button
+                  <AppButton
                     variant="text"
-                    endIcon={
-                      <ChevronRight
-                        className="chevron-icon"
-                        sx={{ transition: "transform 0.2s, color 0.2s" }}
-                      />
-                    }
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      onSelectStory(story.id);
+                    }}
+                    endIcon={<ChevronRight className="chevron-icon" />}
                     sx={{
                       textTransform: "none",
                       fontWeight: "700",
@@ -549,8 +566,10 @@ export function Dashboard({
                       },
                     }}
                   >
-                    {isCompleted ? "Read Again" : "Start Reading"}
-                  </Button>
+                    {isCompleted
+                      ? uiText.dashboard.ctaReadAgain
+                      : uiText.dashboard.ctaStartReading}
+                  </AppButton>
                 </Box>
               </Card>
             );
@@ -577,22 +596,21 @@ export function Dashboard({
               mb: 1,
             }}
           >
-            No stories match your criteria
+            <Translatable>{uiText.dashboard.emptyTitle}</Translatable>
           </Typography>
           <Typography
             variant="body2"
             color="text.secondary"
             sx={{ fontFamily: "Inter, system-ui, sans-serif", mb: 3 }}
           >
-            Try modifying your search text, changing the level, or altering
-            progress filters.
+            <Translatable>{uiText.dashboard.emptyDescription}</Translatable>
           </Typography>
-          <Button
+          <AppButton
             variant="outlined"
             onClick={() => {
               setSearchQuery("");
-              setSelectedDifficulty("All");
-              setSelectedProgress("All");
+              setSelectedDifficulty(DifficultyFilter.All);
+              setSelectedProgress(ProgressFilter.All);
             }}
             sx={{
               borderRadius: 2,
@@ -601,8 +619,8 @@ export function Dashboard({
               fontWeight: "600",
             }}
           >
-            Reset Filters
-          </Button>
+            {uiText.dashboard.resetFilters}
+          </AppButton>
         </Paper>
       )}
     </Box>

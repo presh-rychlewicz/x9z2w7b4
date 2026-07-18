@@ -1,0 +1,57 @@
+{
+  "id": "boy-cried-wolf",
+  "title": "The Boy Who Cried Wolf",
+  "difficulty": "Intermediate",
+  "synopsis": "A bored young shepherd boy plays a series of tricks on his villagers. A story about the cost of lying.",
+  "sentences": [
+    "Once, there was a young shepherd boy who watched over a flock of sheep near a dark forest.",
+    "The job was very quiet, and the boy often grew bored.",
+    "To entertain himself, he decided to play a trick on the nearby villagers.",
+    "He ran toward the village screaming, \"Wolf! Wolf! A wolf is chasing the sheep!\"",
+    "The villagers dropped their tools and rushed up the hill to help him.",
+    "When they arrived, there was no wolf.",
+    "The boy laughed at them, and the villagers went back angry.",
+    "A few days later, the boy played the same trick.",
+    "\"Wolf! Wolf!\" he cried.",
+    "Again, the villagers ran to save the sheep, only to find the boy laughing.",
+    "The village elders scolded him: \"Do not cry wolf when there is no wolf!\"",
+    "One evening, a real wolf did come out of the forest.",
+    "The terrified boy ran to the village, screaming louder than ever, \"Please help! A real wolf is here! Wolf! Wolf!\"",
+    "But this time, the villagers thought he was tricking them again.",
+    "They ignored his cries.",
+    "No one came to help, and the wolf carried away many of the boy's sheep.",
+    "The boy learned a bitter lesson: nobody believes a liar, even when they tell the truth."
+  ],
+  "glossary": [
+    {
+      "word": "shepherd",
+      "partOfSpeech": "noun",
+      "definition": "A person whose job is to take care of sheep.",
+      "example": "The shepherd guided the sheep back into the pen."
+    },
+    {
+      "word": "flock",
+      "partOfSpeech": "noun",
+      "definition": "A group of birds, sheep, or goats.",
+      "example": "A large flock of sheep grazed in the green valley."
+    },
+    {
+      "word": "entertain",
+      "partOfSpeech": "verb",
+      "definition": "To provide amusement or enjoyment to someone.",
+      "example": "The clown did tricks to entertain the children."
+    },
+    {
+      "word": "scolded",
+      "partOfSpeech": "verb",
+      "definition": "Angrily pointed out someone's mistakes or bad behavior.",
+      "example": "The teacher scolded the students for talking during the exam."
+    },
+    {
+      "word": "ignored",
+      "partOfSpeech": "verb",
+      "definition": "Refused to take notice of or pay attention to someone or something.",
+      "example": "He ignored the warning signs and drove into the flooded road."
+    }
+  ]
+}

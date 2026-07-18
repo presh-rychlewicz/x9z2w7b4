@@ -1,0 +1,56 @@
+{
+  "id": "tortoise-hare",
+  "title": "The Tortoise and the Hare",
+  "difficulty": "Beginner",
+  "synopsis": "A fast hare and a slow tortoise decide to have a race. A classic story about patience and hard work.",
+  "sentences": [
+    "Once upon a time, there was a Hare who loved to boast about how fast he could run.",
+    "\"I am the fastest animal in the forest,\" he would tell anyone who listened.",
+    "The other animals were tired of his bragging.",
+    "One day, the slow-moving Tortoise looked up and said, \"I challenge you to a race.\"",
+    "The Hare laughed loudly.",
+    "\"You? A race against me? This will be too easy!\" he sneered.",
+    "The next morning, the race started.",
+    "The Hare sprinted ahead and was soon far out of sight.",
+    "Feeling confident, he looked back and decided to take a nap under a large oak tree.",
+    "\"That slowpoke will take hours to get here,\" the Hare thought as he fell asleep.",
+    "Meanwhile, the Tortoise walked slowly but steadily.",
+    "He did not stop, nor did he look back.",
+    "He kept his eyes on the finish line.",
+    "When the Hare finally woke up, he ran as fast as he could to the finish.",
+    "But to his surprise, the Tortoise had already crossed the line.",
+    "The slow and steady Tortoise had won the race!"
+  ],
+  "glossary": [
+    {
+      "word": "boast",
+      "partOfSpeech": "verb",
+      "definition": "To talk with excessive pride about oneself or one's achievements.",
+      "example": "He liked to boast about how many goals he scored."
+    },
+    {
+      "word": "bragging",
+      "partOfSpeech": "noun / verb",
+      "definition": "Saying how good you are at something in an annoying way.",
+      "example": "Stop bragging about your high grades."
+    },
+    {
+      "word": "challenge",
+      "partOfSpeech": "verb",
+      "definition": "To invite someone to compete in a game or fight.",
+      "example": "I want to challenge you to a game of chess."
+    },
+    {
+      "word": "sprint",
+      "partOfSpeech": "verb",
+      "definition": "To run at full speed over a short distance.",
+      "example": "The athlete had to sprint to catch up to the leader."
+    },
+    {
+      "word": "steadily",
+      "partOfSpeech": "adverb",
+      "definition": "In a regular, consistent, and even way.",
+      "example": "She walked steadily up the steep hill."
+    }
+  ]
+}

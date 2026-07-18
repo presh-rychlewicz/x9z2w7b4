@@ -1,113 +1,156 @@
-import { useState } from 'react'
 import {
-  Typography,
+  Add,
+  ArrowBack,
+  CheckCircle,
+  FormatSize,
+  NavigateBefore,
+  NavigateNext,
+  RadioButtonUnchecked,
+  Remove,
+} from "@mui/icons-material";
+import {
   Box,
-  Button,
-  Paper,
-  Divider,
   Chip,
-  ToggleButton,
-  ToggleButtonGroup,
-} from '@mui/material'
-import { ArrowBack, FormatSize, FontDownload, CheckCircle, RadioButtonUnchecked } from '@mui/icons-material'
-import type { Story } from '../storiesData'
-import { GlossaryPanel } from './GlossaryPanel'
+  Divider,
+  LinearProgress,
+  Paper,
+  Typography,
+} from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { uiLabel, uiText } from "../constants/uiText";
+import type { Story } from "../types/story";
+import AppButton from "./AppButton";
+import Translatable from "./Translatable";
 
 interface StoryReaderProps {
-  story: Story
-  onBack: () => void
-  fontFamily: 'sans-serif' | 'serif'
-  onChangeFontFamily: (font: 'sans-serif' | 'serif') => void
-  isCompleted: boolean
-  onToggleComplete: () => void
+  story: Story;
+  onBack: () => void;
+  isCompleted: boolean;
+  onToggleComplete: () => void;
 }
 
-export function StoryReader({ 
-  story, 
-  onBack, 
-  fontFamily, 
-  onChangeFontFamily,
+export function StoryReader({
+  story,
+  onBack,
   isCompleted,
-  onToggleComplete
+  onToggleComplete,
 }: StoryReaderProps) {
-  const [fontSize, setFontSize] = useState<number>(20)
+  const MIN_FONT_SIZE = 16;
+  const MAX_FONT_SIZE = 28;
+  const FONT_SIZE_STEP = 2;
+  const [fontSize, setFontSize] = useState<number>(20);
+  const [currentSentenceIndex, setCurrentSentenceIndex] = useState(-1);
+
+  const sentences = useMemo(() => story.sentences, [story.sentences]);
+
+  useEffect(() => {
+    setCurrentSentenceIndex(-1);
+  }, [story.id]);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  const totalSentences = Math.max(sentences.length, 1);
+  const completedSentences = Math.max(currentSentenceIndex + 1, 0);
+  const activeSentence =
+    currentSentenceIndex >= 0 ? (sentences[currentSentenceIndex] ?? "") : "";
+  const progressPercent = (completedSentences / totalSentences) * 100;
+  const isIntroStep = currentSentenceIndex < 0;
+  const isFirstStep = currentSentenceIndex <= -1;
+  const isLastSentence = currentSentenceIndex >= totalSentences - 1;
 
   return (
-    <Box>
+    <Box
+      sx={{
+        height: "calc(100vh - 132px)",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       {/* Header controls */}
-      <Box 
-        sx={{ 
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' }, 
-          justifyContent: 'space-between', 
-          alignItems: { xs: 'flex-start', sm: 'center' }, 
-          gap: 2,
-          mb: 4 
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 1,
+          mb: 2,
+          flexWrap: "nowrap",
         }}
       >
-        <Button
+        <AppButton
           variant="outlined"
           startIcon={<ArrowBack />}
           onClick={onBack}
-          sx={{ 
-            borderRadius: 2, 
-            textTransform: 'none', 
-            fontFamily: 'Inter, system-ui, sans-serif', 
-            fontWeight: '600' 
+          sx={{
+            borderRadius: 2,
+            textTransform: "none",
+            fontFamily: "Inter, system-ui, sans-serif",
+            fontWeight: "600",
           }}
         >
-          Back to Stories
-        </Button>
+          {uiText.storyReader.backToStories}
+        </AppButton>
 
         {/* Reading Settings */}
-        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, alignItems: 'center', width: { xs: '100%', sm: 'auto' } }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 1,
+            alignItems: "center",
+            width: "auto",
+            flexShrink: 0,
+          }}
+        >
           {/* Font Size Selectors */}
-          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 1,
+              alignItems: "center",
+            }}
+          >
             <FormatSize color="action" />
-            <ToggleButtonGroup
-              value={fontSize}
-              exclusive
-              onChange={(_, val) => val && setFontSize(val)}
+            <AppButton
+              variant="outlined"
+              color="primary"
               size="small"
-              aria-label="font size"
+              aria-label={uiText.storyReader.decreaseFontSizeAriaLabel}
+              onClick={() =>
+                setFontSize((prev) =>
+                  Math.max(MIN_FONT_SIZE, prev - FONT_SIZE_STEP),
+                )
+              }
+              disabled={fontSize <= MIN_FONT_SIZE}
+              sx={{ minWidth: 38, px: 0.5, borderRadius: 2, fontWeight: "700" }}
             >
-              <ToggleButton value={16} aria-label="small font">
-                S
-              </ToggleButton>
-              <ToggleButton value={20} aria-label="medium font">
-                M
-              </ToggleButton>
-              <ToggleButton value={24} aria-label="large font">
-                L
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
+              <Remove fontSize="small" />
+            </AppButton>
 
-          {/* Font Family Selectors */}
-          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}>
-            <FontDownload color="action" />
-            <ToggleButtonGroup
-              value={fontFamily}
-              exclusive
-              onChange={(_, val) => val && onChangeFontFamily(val)}
+            <AppButton
+              variant="outlined"
+              color="primary"
               size="small"
-              aria-label="font family"
+              aria-label={uiText.storyReader.increaseFontSizeAriaLabel}
+              onClick={() =>
+                setFontSize((prev) =>
+                  Math.min(MAX_FONT_SIZE, prev + FONT_SIZE_STEP),
+                )
+              }
+              disabled={fontSize >= MAX_FONT_SIZE}
+              sx={{ minWidth: 38, px: 0.5, borderRadius: 2, fontWeight: "700" }}
             >
-              <ToggleButton 
-                value="serif" 
-                aria-label="serif font" 
-                sx={{ fontFamily: 'Georgia, serif', textTransform: 'none' }}
-              >
-                Serif
-              </ToggleButton>
-              <ToggleButton 
-                value="sans-serif" 
-                aria-label="sans-serif font" 
-                sx={{ fontFamily: 'Inter, sans-serif', textTransform: 'none' }}
-              >
-                Sans
-              </ToggleButton>
-            </ToggleButtonGroup>
+              <Add fontSize="small" />
+            </AppButton>
           </Box>
         </Box>
       </Box>
@@ -115,90 +158,186 @@ export function StoryReader({
       {/* Layout Grid */}
       <Box
         sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', lg: '7fr 5fr' },
-          gap: 4,
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          minHeight: 0,
         }}
       >
-        {/* Left Column: Story paragraphs */}
-        <Box>
-          <Paper 
-            elevation={0} 
-            sx={{ 
-              p: { xs: 3, md: 4 }, 
-              borderRadius: 3, 
-              border: '1px solid', 
-              borderColor: 'divider',
-              minHeight: '60vh'
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 3, md: 4 },
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            minHeight: 0,
+            overflow: "hidden",
+          }}
+        >
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              mb: 1,
+              fontFamily: "Inter, system-ui, sans-serif",
+              fontWeight: 600,
             }}
           >
-            <Typography 
-              variant="h4" 
-              component="h1" 
-              sx={{ fontWeight: '700', mb: 3, fontFamily: 'Inter, system-ui, sans-serif' }}
-            >
-              {story.title}
-            </Typography>
+            {uiText.storyReader.sentenceProgressLabel} {completedSentences}{" "}
+            {uiText.storyReader.sentenceProgressOf} {totalSentences}
+          </Typography>
+          <LinearProgress
+            variant="determinate"
+            value={progressPercent}
+            sx={{ mb: 3, height: 8, borderRadius: 999 }}
+          />
 
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, mb: 4 }}>
-              <Chip 
-                label={story.difficulty} 
-                color={story.difficulty === 'Beginner' ? 'success' : 'warning'} 
-                size="small" 
-              />
-              <Chip 
-                label={`${story.readingTimeMin} min read`} 
-                variant="outlined" 
-                size="small" 
-              />
-            </Box>
+          <Divider sx={{ mb: 3 }} />
 
-            <Divider sx={{ mb: 4 }} />
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              px: { xs: 0.5, md: 2 },
+              minHeight: 0,
+            }}
+          >
+            {isIntroStep ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  sx={{
+                    fontWeight: "700",
+                    mb: 2,
+                    fontFamily: "Inter, system-ui, sans-serif",
+                  }}
+                >
+                  <Translatable>{story.title}</Translatable>
+                </Typography>
 
-            {story.paragraphs.map((p, index) => (
+                <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
+                  <Chip
+                    label={<Translatable>{story.difficulty}</Translatable>}
+                    color={
+                      story.difficulty === "Beginner" ? "success" : "warning"
+                    }
+                    size="small"
+                  />
+                  <Chip
+                    label={
+                      <Translatable>
+                        {uiLabel.minRead(story.readingTimeMin)}
+                      </Translatable>
+                    }
+                    variant="outlined"
+                    size="small"
+                  />
+                </Box>
+              </Box>
+            ) : (
               <Typography
-                key={index}
                 component="p"
                 sx={{
                   fontSize: `${fontSize}px`,
-                  lineHeight: 1.8,
-                  mb: 3.5,
-                  color: 'text.primary',
-                  textAlign: 'justify',
+                  lineHeight: 1.9,
+                  color: "text.primary",
+                  textAlign: "center",
+                  fontWeight: 500,
+                  maxWidth: 900,
                 }}
               >
-                {p}
+                {activeSentence ? (
+                  <Translatable>{activeSentence}</Translatable>
+                ) : null}
               </Typography>
-            ))}
+            )}
+          </Box>
 
-            <Divider sx={{ my: 4 }} />
+          <Divider sx={{ my: 3 }} />
 
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                variant={isCompleted ? "contained" : "outlined"}
-                color={isCompleted ? "success" : "primary"}
-                startIcon={isCompleted ? <CheckCircle /> : <RadioButtonUnchecked />}
-                onClick={onToggleComplete}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: { xs: "stretch", md: "center" },
+              justifyContent: "flex-start",
+              gap: 1.5,
+            }}
+          >
+            <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
+              <AppButton
+                variant="outlined"
+                startIcon={<NavigateBefore />}
+                onClick={() =>
+                  setCurrentSentenceIndex((prev) => Math.max(prev - 1, -1))
+                }
+                disabled={isFirstStep}
                 sx={{
-                  borderRadius: 3,
-                  px: 4,
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontWeight: '700',
-                  fontFamily: 'Inter, system-ui, sans-serif'
+                  textTransform: "none",
+                  fontWeight: 600,
+                  flex: 1,
+                  minWidth: 0,
                 }}
               >
-                {isCompleted ? "Mark as Unread" : "Mark as Completed"}
-              </Button>
-            </Box>
-          </Paper>
-        </Box>
+                {uiText.storyReader.previousSentence}
+              </AppButton>
 
-        {/* Right Column: Glossary / Vocabulary Side Panel */}
-        <Box>
-          <GlossaryPanel glossary={story.glossary} />
-        </Box>
+              {isLastSentence ? (
+                <AppButton
+                  variant="contained"
+                  color={isCompleted ? "success" : "primary"}
+                  startIcon={
+                    isCompleted ? <CheckCircle /> : <RadioButtonUnchecked />
+                  }
+                  onClick={onToggleComplete}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 600,
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  {isCompleted
+                    ? uiText.storyReader.markAsUnread
+                    : uiText.storyReader.markAsCompleted}
+                </AppButton>
+              ) : (
+                <AppButton
+                  variant="contained"
+                  endIcon={<NavigateNext />}
+                  onClick={() =>
+                    setCurrentSentenceIndex((prev) =>
+                      Math.min(prev + 1, totalSentences - 1),
+                    )
+                  }
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 600,
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  {uiText.storyReader.nextSentence}
+                </AppButton>
+              )}
+            </Box>
+          </Box>
+        </Paper>
       </Box>
     </Box>
-  )
+  );
 }
