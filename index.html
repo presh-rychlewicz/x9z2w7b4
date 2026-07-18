@@ -3,11 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#ffffff" />
     <title>x9z2w7b4</title>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (function () {
+        // Prevent zooming via ctrl/cmd + wheel or pinch gestures
+        function preventZoom(e) {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+          }
+        }
+
+        // Prevent keyboard shortcuts for zoom
+        function preventZoomKeys(e) {
+          const key = e.key;
+          if (e.ctrlKey || e.metaKey) {
+            if (key === "+" || key === "-" || key === "=" || key === "0") {
+              e.preventDefault();
+            }
+          }
+        }
+
+        window.addEventListener("wheel", preventZoom, { passive: false });
+        window.addEventListener("keydown", preventZoomKeys, { passive: false });
+
+        // iOS Safari gesture events
+        window.addEventListener("gesturestart", function (e) {
+          e.preventDefault();
+        });
+
+        // Touchmove with scale (pinch) detection
+        window.addEventListener(
+          "touchmove",
+          function (e) {
+            if (e.scale && e.scale !== 1) e.preventDefault();
+          },
+          { passive: false },
+        );
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
