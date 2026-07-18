@@ -19,13 +19,20 @@ const darkTheme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        '*, *::before, *::after': {
+          boxSizing: 'border-box',
+        },
         html: {
           maxWidth: '100%',
           overflowX: 'hidden',
+          boxSizing: 'border-box',
         },
         body: {
           maxWidth: '100%',
           overflowX: 'hidden',
+          boxSizing: 'border-box',
+          margin: 0,
+          padding: 0,
         },
         '#root': {
           maxWidth: '100%',
