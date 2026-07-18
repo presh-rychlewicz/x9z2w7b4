@@ -1,9 +1,8 @@
 import { Chip } from "@mui/material";
-import type { Story } from "../types/story";
 import Translatable from "./Translatable";
 
 interface CategoryPillProps {
-  category: Story["category"];
+  category: string;
 }
 
 export function CategoryPill({ category }: CategoryPillProps) {

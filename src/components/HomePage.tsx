@@ -1,5 +1,5 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { uiText } from "../constants/uiText";
 import type { Story } from "../types/story";
 import AppButton from "./AppButton";
@@ -43,18 +43,10 @@ export function HomePage({
     });
   }, [stories, storyProgressById]);
 
-  const [suggestedStoryIndex, setSuggestedStoryIndex] = useState(0);
-
   const suggestedStory =
-    suggestedStories.length > 0
-      ? suggestedStories[suggestedStoryIndex % suggestedStories.length]
-      : null;
+    suggestedStories.length > 0 ? suggestedStories[0] : null;
   const activeInProgressStory =
     inProgressStories.length > 0 ? inProgressStories[0] : null;
-  const isLastSuggestedStory =
-    suggestedStories.length > 0 &&
-    suggestedStoryIndex % suggestedStories.length ===
-      suggestedStories.length - 1;
 
   return (
     <Box>
