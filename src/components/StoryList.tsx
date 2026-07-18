@@ -32,14 +32,14 @@ interface StoryListProps {
   stories: Story[];
   onSelectStory: (id: string, options?: { startFromCover?: boolean }) => void;
   storyProgressById: Record<string, number>;
-  onBackToInProgress?: () => void;
+  onBackToHome?: () => void;
 }
 
 export function StoryList({
   stories,
   onSelectStory,
   storyProgressById,
-  onBackToInProgress,
+  onBackToHome,
 }: StoryListProps) {
   const difficultyRank: Record<Story["difficulty"], number> = {
     Beginner: 0,
@@ -137,14 +137,14 @@ export function StoryList({
 
   return (
     <Box>
-      {onBackToInProgress ? (
+      {onBackToHome ? (
         <AppButton
           variant="outlined"
           startIcon={<ArrowBack />}
-          onClick={onBackToInProgress}
+          onClick={onBackToHome}
           sx={{ mb: 2, textTransform: "none", fontWeight: "600" }}
         >
-          {uiText.dashboard.backToInProgress}
+          {uiText.navbar.homeButton}
         </AppButton>
       ) : null}
 

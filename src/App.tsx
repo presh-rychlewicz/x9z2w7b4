@@ -1,7 +1,7 @@
 import { Container, CssBaseline, ThemeProvider } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import { DevPage } from "./components/DevPage";
-import { InProgressPage } from "./components/InProgressPage";
+import { HomePage } from "./components/HomePage";
 import { Navbar } from "./components/Navbar";
 import { StoryList } from "./components/StoryList";
 import { StoryReader } from "./components/StoryReader";
@@ -14,9 +14,9 @@ import { stories } from "./storiesData";
 import { createAppTheme } from "./theme/appTheme";
 
 const AppPage = {
+  Home: "home",
   Main: "main",
   Dev: "dev",
-  InProgress: "inProgress",
 } as const;
 
 type AppPage = (typeof AppPage)[keyof typeof AppPage];
@@ -31,11 +31,9 @@ function App() {
       return "dark";
     }
   });
-  const [activePage, setActivePage] = useState<AppPage>(AppPage.InProgress);
+  const [activePage, setActivePage] = useState<AppPage>(AppPage.Home);
   const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
-  const [storyReturnPage, setStoryReturnPage] = useState<AppPage>(
-    AppPage.InProgress,
-  );
+  const [storyReturnPage, setStoryReturnPage] = useState<AppPage>(AppPage.Home);
   const [startStoryFromCover, setStartStoryFromCover] = useState(false);
   const [showStoryTranslations, setShowStoryTranslations] = useState(() => {
     try {
@@ -170,10 +168,10 @@ function App() {
 
     switch (activePage) {
       case AppPage.Dev:
-        return <DevPage onBack={() => setActivePage(AppPage.InProgress)} />;
-      case AppPage.InProgress:
+        return <DevPage onBack={() => setActivePage(AppPage.Home)} />;
+      case AppPage.Home:
         return (
-          <InProgressPage
+          <HomePage
             stories={stories}
             storyProgressById={storyProgressById}
             onSelectStory={handleOpenStory}
@@ -187,7 +185,7 @@ function App() {
             stories={stories}
             onSelectStory={handleOpenStory}
             storyProgressById={storyProgressById}
-            onBackToInProgress={() => setActivePage(AppPage.InProgress)}
+            onBackToHome={() => setActivePage(AppPage.Home)}
           />
         );
     }

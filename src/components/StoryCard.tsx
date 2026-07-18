@@ -21,6 +21,7 @@ interface StoryCardProps {
   onSelectStory: (id: string) => void;
   ctaMode?: "auto" | "continue";
   scrollToTopOnSelect?: boolean;
+  showActionButton?: boolean;
 }
 
 export function StoryCard({
@@ -30,6 +31,7 @@ export function StoryCard({
   onSelectStory,
   ctaMode = "auto",
   scrollToTopOnSelect = true,
+  showActionButton = true,
 }: StoryCardProps) {
   const totalSentences = story.sentences.length;
   const safeCompletedSentences = Math.min(
@@ -240,39 +242,41 @@ export function StoryCard({
         </Box>
       </Box>
 
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          alignSelf: { xs: "stretch", sm: "center" },
-          mt: { xs: 2, sm: 0 },
-          pl: { sm: 3 },
-          width: { xs: "100%", sm: "auto" },
-        }}
-      >
-        <AppButton
-          variant="outlined"
-          fullWidth
-          onClick={() => {
-            if (scrollToTopOnSelect) {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }
-            onSelectStory(story.id);
-          }}
-          endIcon={<ChevronRight className="chevron-icon" />}
+      {showActionButton ? (
+        <Box
           sx={{
-            borderRadius: 2,
-            textTransform: "none",
-            fontWeight: "700",
-            fontFamily: "Inter, system-ui, sans-serif",
-            "&:hover": {
-              borderColor: "primary.main",
-            },
+            display: "flex",
+            alignItems: "center",
+            alignSelf: { xs: "stretch", sm: "center" },
+            mt: { xs: 2, sm: 0 },
+            pl: { sm: 3 },
+            width: { xs: "100%", sm: "auto" },
           }}
         >
-          {ctaLabel}
-        </AppButton>
-      </Box>
+          <AppButton
+            variant="outlined"
+            fullWidth
+            onClick={() => {
+              if (scrollToTopOnSelect) {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+              onSelectStory(story.id);
+            }}
+            endIcon={<ChevronRight className="chevron-icon" />}
+            sx={{
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: "700",
+              fontFamily: "Inter, system-ui, sans-serif",
+              "&:hover": {
+                borderColor: "primary.main",
+              },
+            }}
+          >
+            {ctaLabel}
+          </AppButton>
+        </Box>
+      ) : null}
     </Card>
   );
 }

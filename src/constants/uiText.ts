@@ -6,6 +6,7 @@ export const uiText = {
   navbar: {
     brandName: "FableRead",
     tagline: "• Kids' Stories for English Learners",
+    homeButton: "Home",
     allStoriesButton: "All Stories",
     devButton: "Dev",
   },
@@ -15,6 +16,7 @@ export const uiText = {
     continueReading: "Continue Reading",
     emptyTitle: "No in-progress stories yet",
     emptyDescription: "Start reading a story to see it appear in this list.",
+    tryOneMoreTime: "Try one more time",
   },
   devPage: {
     backToApp: "Back to App",
@@ -48,7 +50,6 @@ export const uiText = {
     progressUnread: "Unread",
     progressInProgress: "In Progress",
     progressCompleted: "Completed",
-    backToInProgress: "Back to In Progress",
     storyProgressLabel: "Progress",
     cardCompleted: "Completed",
     cardUnread: "Unread",
