@@ -131,19 +131,15 @@ export function Dashboard({ stories, onSelectStory, completedStoryIds }: Dashboa
           borderColor: 'divider',
           display: 'flex',
           flexDirection: 'column',
-          gap: 2.5,
+          gap: 2,
         }}
       >
-        {/* Row 1: Search + Level */}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            gap: 2.5,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
+        {/* Search */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Search color="action" sx={{ flexShrink: 0 }} />
+          <Typography variant="body2" sx={{ fontWeight: '600', fontFamily: 'Inter, sans-serif', width: 72, flexShrink: 0 }}>
+            Search:
+          </Typography>
           <TextField
             placeholder="Search fables..."
             value={searchQuery}
@@ -160,54 +156,51 @@ export function Dashboard({ stories, onSelectStory, completedStoryIds }: Dashboa
               },
             }}
             sx={{
-              maxWidth: { xs: '100%', md: 350 },
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2.5,
                 fontFamily: 'Inter, system-ui, sans-serif',
               },
             }}
           />
-
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: { xs: '100%', md: 'auto' } }}>
-            <FilterList color="action" />
-            <Typography
-              variant="body2"
-              sx={{ fontWeight: '600', display: { xs: 'none', sm: 'block' }, fontFamily: 'Inter, sans-serif' }}
-            >
-              Level:
-            </Typography>
-            <ToggleButtonGroup
-              value={selectedDifficulty}
-              exclusive
-              onChange={(_, val) => val && setSelectedDifficulty(val)}
-              size="small"
-              aria-label="difficulty filter"
-              sx={{
-                width: { xs: '100%', sm: 'auto' },
-                '& .MuiToggleButton-root': {
-                  flex: { xs: 1, sm: 'initial' },
-                  borderRadius: 2,
-                  px: 2,
-                  py: 0.8,
-                  textTransform: 'none',
-                  fontWeight: '600',
-                  fontFamily: 'Inter, system-ui, sans-serif',
-                },
-              }}
-            >
-              <ToggleButton value="All">All Levels</ToggleButton>
-              <ToggleButton value="Beginner">Beginner</ToggleButton>
-              <ToggleButton value="Intermediate">Intermediate</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
         </Box>
 
         <Divider />
 
-        {/* Row 2: Progress filter */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-          <CheckCircle color="action" />
-          <Typography variant="body2" sx={{ fontWeight: '600', fontFamily: 'Inter, sans-serif' }}>
+        {/* Level filter */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <FilterList color="action" sx={{ flexShrink: 0 }} />
+          <Typography variant="body2" sx={{ fontWeight: '600', fontFamily: 'Inter, sans-serif', width: 72, flexShrink: 0 }}>
+            Level:
+          </Typography>
+          <ToggleButtonGroup
+            value={selectedDifficulty}
+            exclusive
+            onChange={(_, val) => val && setSelectedDifficulty(val)}
+            size="small"
+            aria-label="difficulty filter"
+            sx={{
+              '& .MuiToggleButton-root': {
+                borderRadius: 2,
+                px: 2,
+                py: 0.7,
+                textTransform: 'none',
+                fontWeight: '600',
+                fontFamily: 'Inter, system-ui, sans-serif',
+              },
+            }}
+          >
+            <ToggleButton value="All">All Levels</ToggleButton>
+            <ToggleButton value="Beginner">Beginner</ToggleButton>
+            <ToggleButton value="Intermediate">Intermediate</ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+
+        <Divider />
+
+        {/* Progress filter */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <CheckCircle color="action" sx={{ flexShrink: 0 }} />
+          <Typography variant="body2" sx={{ fontWeight: '600', fontFamily: 'Inter, sans-serif', width: 72, flexShrink: 0 }}>
             Progress:
           </Typography>
           <ToggleButtonGroup
@@ -219,8 +212,8 @@ export function Dashboard({ stories, onSelectStory, completedStoryIds }: Dashboa
             sx={{
               '& .MuiToggleButton-root': {
                 borderRadius: 2,
-                px: 2.5,
-                py: 0.6,
+                px: 2,
+                py: 0.7,
                 textTransform: 'none',
                 fontWeight: '600',
                 fontFamily: 'Inter, system-ui, sans-serif',
