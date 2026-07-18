@@ -1,10 +1,15 @@
 import { Container, CssBaseline, ThemeProvider } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
-import { Dashboard } from "./components/Dashboard";
 import { DevPage } from "./components/DevPage";
 import { InProgressPage } from "./components/InProgressPage";
 import { Navbar } from "./components/Navbar";
+import { StoryList } from "./components/StoryList";
 import { StoryReader } from "./components/StoryReader";
+import {
+  STORY_PROGRESS_KEY,
+  STORY_TRANSLATIONS_MODE_KEY,
+  THEME_MODE_KEY,
+} from "./constants/storage";
 import { stories } from "./storiesData";
 import { createAppTheme } from "./theme/appTheme";
 
@@ -18,9 +23,6 @@ type AppPage = (typeof AppPage)[keyof typeof AppPage];
 
 function App() {
   const isDevelopment = import.meta.env.DEV;
-  const STORY_PROGRESS_KEY = "storySentenceProgress";
-  const THEME_MODE_KEY = "themeMode";
-  const STORY_TRANSLATIONS_MODE_KEY = "storyTranslationsMode";
   const [themeMode, setThemeMode] = useState<"light" | "dark">(() => {
     try {
       const saved = localStorage.getItem(THEME_MODE_KEY);
@@ -181,7 +183,7 @@ function App() {
       case AppPage.Main:
       default:
         return (
-          <Dashboard
+          <StoryList
             stories={stories}
             onSelectStory={handleOpenStory}
             storyProgressById={storyProgressById}

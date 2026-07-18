@@ -28,19 +28,19 @@ import type { Story } from "../types/story";
 import AppButton from "./AppButton";
 import Translatable from "./Translatable";
 
-interface DashboardProps {
+interface StoryListProps {
   stories: Story[];
   onSelectStory: (id: string, options?: { startFromCover?: boolean }) => void;
   storyProgressById: Record<string, number>;
   onBackToInProgress?: () => void;
 }
 
-export function Dashboard({
+export function StoryList({
   stories,
   onSelectStory,
   storyProgressById,
   onBackToInProgress,
-}: DashboardProps) {
+}: StoryListProps) {
   const difficultyRank: Record<Story["difficulty"], number> = {
     Beginner: 0,
     Intermediate: 1,
@@ -167,7 +167,6 @@ export function Dashboard({
           : uiText.dashboard.hideFilters}
       </AppButton>
 
-      {/* Filter Controls */}
       <Collapse in={!areFiltersCollapsed}>
         <Paper
           elevation={0}
@@ -182,7 +181,6 @@ export function Dashboard({
             gap: 2,
           }}
         >
-          {/* Level filter */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
             <Box
               sx={{
@@ -230,7 +228,6 @@ export function Dashboard({
 
           <Divider />
 
-          {/* Category filter */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
             <Box
               sx={{
@@ -274,7 +271,6 @@ export function Dashboard({
 
           <Divider />
 
-          {/* Progress filter */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
             <Box
               sx={{
@@ -329,7 +325,6 @@ export function Dashboard({
         </Paper>
       </Collapse>
 
-      {/* Story List */}
       {filteredStories.length > 0 ? (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
           {filteredStories.map((story) => {
@@ -359,7 +354,6 @@ export function Dashboard({
                   overflow: "hidden",
                 }}
               >
-                {/* Completion accent bar */}
                 {isCompleted && (
                   <Box
                     sx={{
@@ -373,7 +367,6 @@ export function Dashboard({
                   />
                 )}
 
-                {/* Left content */}
                 <Box
                   sx={{
                     display: "flex",
@@ -397,7 +390,6 @@ export function Dashboard({
                   </Avatar>
 
                   <Box>
-                    {/* Title + chips */}
                     <Box
                       sx={{
                         display: "flex",
@@ -510,7 +502,6 @@ export function Dashboard({
                       <Translatable>{story.synopsis}</Translatable>
                     </Typography>
 
-                    {/* Metadata row */}
                     <Box
                       sx={{
                         display: "flex",
@@ -563,7 +554,6 @@ export function Dashboard({
                   </Box>
                 </Box>
 
-                {/* Right: CTA */}
                 <Box
                   sx={{
                     display: "flex",
