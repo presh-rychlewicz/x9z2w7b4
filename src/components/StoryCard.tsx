@@ -3,6 +3,7 @@ import {
   CheckCircle,
   ChevronRight,
   Layers,
+  LocalOffer,
   MenuBook,
   RadioButtonUnchecked,
 } from "@mui/icons-material";
@@ -10,7 +11,6 @@ import { Avatar, Box, Card, Chip, Typography } from "@mui/material";
 import { uiLabel, uiText } from "../constants/uiText";
 import type { Story } from "../types/story";
 import AppButton from "./AppButton";
-import CategoryPill from "./CategoryPill";
 import LevelPill from "./LevelPill";
 import Translatable from "./Translatable";
 
@@ -188,8 +188,26 @@ export function StoryCard({
             <Translatable>{story.synopsis}</Translatable>
           </Typography>
 
-          <Box sx={{ mb: 2 }}>
-            <CategoryPill category={story.category} />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 0.8,
+              color: "text.secondary",
+              mb: 2,
+            }}
+          >
+            <LocalOffer sx={{ fontSize: 16 }} />
+            <Typography
+              variant="caption"
+              sx={{
+                fontWeight: "600",
+                fontFamily: "Inter, system-ui, sans-serif",
+              }}
+            >
+              <Translatable>{story.category}</Translatable>
+            </Typography>
           </Box>
 
           <Box

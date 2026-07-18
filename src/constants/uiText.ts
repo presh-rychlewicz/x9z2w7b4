@@ -2,17 +2,14 @@ export const uiText = {
   common: {
     minReadSuffix: "min read",
     wordsSuffix: "words",
-    vocabWordsSuffix: "vocab words",
   },
   navbar: {
     brandName: "FableRead",
     tagline: "• Kids' Stories for English Learners",
-    inProgressButton: "In Progress",
     allStoriesButton: "All Stories",
     devButton: "Dev",
   },
   inProgressPage: {
-    backToAllStories: "Back to All Stories",
     title: "In Progress Stories",
     subtitle: "Continue where you left off.",
     continueReading: "Continue Reading",
@@ -20,8 +17,6 @@ export const uiText = {
     emptyDescription: "Start reading a story to see it appear in this list.",
   },
   devPage: {
-    title: "Developer Page",
-    description: "This page is intentionally empty for now.",
     backToApp: "Back to App",
     clearLocalData: "Clear Local Data",
     clearLocalDataDescription:
@@ -34,19 +29,12 @@ export const uiText = {
     storiesSectionTitle: "Stories",
     storyStringsLabel: "Story strings",
     storyMissingTranslationsLabel: "Story strings with missing translations",
-    missingWordsLabel: "Words with missing translations",
     copyMissingWords: "Copy missing words",
     noMissingWords: "none",
   },
   dashboard: {
-    badge: "ENGLISH LEARNING COMPANION",
-    title: "Kids' Fables",
-    subtitle:
-      "Practice reading simple, engaging fables. Track your progress and master new vocabulary terms.",
-    searchLabel: "Search",
     showFilters: "Show Filters",
     hideFilters: "Hide Filters",
-    searchPlaceholder: "Search fables...",
     levelLabel: "Level",
     categoryLabel: "Category",
     progressLabel: "Progress",
@@ -78,14 +66,8 @@ export const uiText = {
     increaseFontSizeAriaLabel: "increase font size",
     showTranslationsAriaLabel: "show sentence translation",
     hideTranslationsAriaLabel: "hide sentence translation",
-    showTranslationsButton: "Show PL",
-    hideTranslationsButton: "Hide PL",
     previousSentence: "Previous",
     nextSentence: "Next",
-    sentenceProgressLabel: "Sentence",
-    sentenceProgressOf: "of",
-    markAsUnread: "Mark as Unread",
-    markAsCompleted: "Mark as Completed",
   },
   glossary: {
     title: "Key Vocabulary",
@@ -102,7 +84,5 @@ export const uiText = {
 export const uiLabel = {
   minRead: (minutes: number) => `${minutes} ${uiText.common.minReadSuffix}`,
   wordCount: (count: number) => `${count} ${uiText.common.wordsSuffix}`,
-  vocabWordCount: (count: number) =>
-    `${count} ${uiText.common.vocabWordsSuffix}`,
   storyProgress: (completed: number, total: number) => `${completed}/${total}`,
 };

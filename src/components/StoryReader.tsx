@@ -273,8 +273,9 @@ export function StoryReader({
               fontWeight: 600,
             }}
           >
-            {uiText.dashboard.storyProgressLabel}{" "}
-            {uiLabel.storyProgress(completedSentences, totalSentences)}
+            <Translatable>
+              {`${uiText.dashboard.storyProgressLabel} ${uiLabel.storyProgress(completedSentences, totalSentences)}`}
+            </Translatable>
           </Typography>
           <LinearProgress
             variant="determinate"

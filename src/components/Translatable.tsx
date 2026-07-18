@@ -70,6 +70,9 @@ function translateToken(token: string) {
 }
 
 export function translatePlainText(text: string) {
+  const exact = uiTranslations[text.toLowerCase()];
+  if (exact) return exact;
+
   return text
     .split(/(\s+)/)
     .map((token) => {

@@ -43,6 +43,7 @@ function translateLabel(label: string) {
 export interface AppButtonProps extends ButtonProps {
   caption?: React.ReactNode;
   showAutoCaption?: boolean;
+  alignLabelLeft?: boolean;
   captionTypographyProps?: TypographyProps<"span">;
 }
 
@@ -50,6 +51,7 @@ export function AppButton({
   children,
   caption,
   showAutoCaption = true,
+  alignLabelLeft = false,
   captionTypographyProps,
   ...buttonProps
 }: AppButtonProps) {
@@ -67,8 +69,9 @@ export function AppButton({
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
+          alignItems: alignLabelLeft ? "flex-start" : "center",
           lineHeight: 1.15,
+          width: "100%",
         }}
       >
         <Box component="span">{children}</Box>
@@ -82,6 +85,8 @@ export function AppButton({
               opacity: 0.8,
               fontSize: "0.68rem",
               lineHeight: 1.05,
+              textAlign: alignLabelLeft ? "left" : "center",
+              width: "100%",
             }}
             {...captionTypographyProps}
           >

@@ -29,6 +29,9 @@ function App() {
     "inProgress",
   );
   const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
+  const [storyReturnPage, setStoryReturnPage] = useState<
+    "main" | "dev" | "inProgress"
+  >("inProgress");
   const [startStoryFromCover, setStartStoryFromCover] = useState(false);
   const [showStoryTranslations, setShowStoryTranslations] = useState(() => {
     try {
@@ -75,11 +78,18 @@ function App() {
 
   const handleOpenStory = useCallback(
     (storyId: string, options?: { startFromCover?: boolean }) => {
+      setStoryReturnPage(activePage);
       setStartStoryFromCover(Boolean(options?.startFromCover));
       setSelectedStoryId(storyId);
     },
-    [],
+    [activePage],
   );
+
+  const handleCloseStory = useCallback(() => {
+    setSelectedStoryId(null);
+    setStartStoryFromCover(false);
+    setActivePage(storyReturnPage);
+  }, [storyReturnPage]);
 
   const handleToggleTheme = () => {
     setThemeMode((prev) => {
@@ -261,7 +271,7 @@ function App() {
         ) : activeStory ? (
           <StoryReader
             story={activeStory}
-            onBack={() => setSelectedStoryId(null)}
+            onBack={handleCloseStory}
             initialCompletedSentences={storyProgressById[activeStory.id] ?? 0}
             onProgressChange={handleActiveStoryProgressChange}
             startFromCover={startStoryFromCover}

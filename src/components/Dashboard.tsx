@@ -19,8 +19,6 @@ import {
   Collapse,
   Divider,
   Paper,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
@@ -127,6 +125,16 @@ export function Dashboard({
     };
   };
 
+  const filterButtonSx = {
+    justifyContent: "flex-start",
+    borderRadius: 2,
+    px: 2,
+    py: 0.7,
+    textTransform: "none",
+    fontWeight: "600",
+    fontFamily: "Inter, system-ui, sans-serif",
+  } as const;
+
   return (
     <Box>
       {onBackToInProgress ? (
@@ -193,48 +201,33 @@ export function Dashboard({
               </Typography>
             </Box>
 
-            <ToggleButtonGroup
-              value={selectedDifficulty}
-              exclusive
-              onChange={(_, val) => {
-                if (Object.values(DifficultyFilter).includes(val)) {
-                  setSelectedDifficulty(val as DifficultyFilter);
-                }
-              }}
-              orientation="vertical"
-              size="small"
+            <Box
+              role="group"
               aria-label={uiText.dashboard.difficultyAriaLabel}
-              sx={{
-                alignItems: "stretch",
-                "& .MuiToggleButtonGroup-grouped": {
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 2,
-                },
-                "& .MuiToggleButton-root": {
-                  borderRadius: 2,
-                  px: 2,
-                  py: 0.7,
-                  textTransform: "none",
-                  fontWeight: "600",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                  justifyContent: "flex-start",
-                },
-                "& .MuiToggleButton-root + .MuiToggleButton-root": {
-                  mt: 1,
-                },
-              }}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-              <ToggleButton value={DifficultyFilter.All}>
-                {uiText.dashboard.difficultyAll}
-              </ToggleButton>
-              <ToggleButton value={DifficultyFilter.Beginner}>
-                {uiText.dashboard.difficultyBeginner}
-              </ToggleButton>
-              <ToggleButton value={DifficultyFilter.Intermediate}>
-                {uiText.dashboard.difficultyIntermediate}
-              </ToggleButton>
-            </ToggleButtonGroup>
+              {[ 
+                DifficultyFilter.All,
+                DifficultyFilter.Beginner,
+                DifficultyFilter.Intermediate,
+              ].map((value) => (
+                <AppButton
+                  key={value}
+                  variant={selectedDifficulty === value ? "contained" : "outlined"}
+                  size="small"
+                  alignLabelLeft
+                  aria-pressed={selectedDifficulty === value}
+                  onClick={() => setSelectedDifficulty(value)}
+                  sx={filterButtonSx}
+                >
+                  {value === DifficultyFilter.All
+                    ? uiText.dashboard.difficultyAll
+                    : value === DifficultyFilter.Beginner
+                      ? uiText.dashboard.difficultyBeginner
+                      : uiText.dashboard.difficultyIntermediate}
+                </AppButton>
+              ))}
+            </Box>
           </Box>
 
           <Divider />
@@ -258,44 +251,25 @@ export function Dashboard({
               </Typography>
             </Box>
 
-            <ToggleButtonGroup
-              value={selectedCategory}
-              exclusive
-              onChange={(_, val) => {
-                if (typeof val === "string") {
-                  setSelectedCategory(val);
-                }
-              }}
-              orientation="vertical"
-              size="small"
+            <Box
+              role="group"
               aria-label={uiText.dashboard.categoryAriaLabel}
-              sx={{
-                alignItems: "stretch",
-                "& .MuiToggleButtonGroup-grouped": {
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 2,
-                },
-                "& .MuiToggleButton-root": {
-                  borderRadius: 2,
-                  px: 2,
-                  py: 0.7,
-                  textTransform: "none",
-                  fontWeight: "600",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                  justifyContent: "flex-start",
-                },
-                "& .MuiToggleButton-root + .MuiToggleButton-root": {
-                  mt: 1,
-                },
-              }}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
               {categoryOptions.map((category) => (
-                <ToggleButton key={category} value={category}>
+                <AppButton
+                  key={category}
+                  variant={selectedCategory === category ? "contained" : "outlined"}
+                  size="small"
+                  alignLabelLeft
+                  aria-pressed={selectedCategory === category}
+                  onClick={() => setSelectedCategory(category)}
+                  sx={filterButtonSx}
+                >
                   {category}
-                </ToggleButton>
+                </AppButton>
               ))}
-            </ToggleButtonGroup>
+            </Box>
           </Box>
 
           <Divider />
@@ -319,51 +293,36 @@ export function Dashboard({
               </Typography>
             </Box>
 
-            <ToggleButtonGroup
-              value={selectedProgress}
-              exclusive
-              onChange={(_, val) => {
-                if (Object.values(ProgressFilter).includes(val)) {
-                  setSelectedProgress(val as ProgressFilter);
-                }
-              }}
-              orientation="vertical"
-              size="small"
+            <Box
+              role="group"
               aria-label={uiText.dashboard.progressAriaLabel}
-              sx={{
-                alignItems: "stretch",
-                "& .MuiToggleButtonGroup-grouped": {
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 2,
-                },
-                "& .MuiToggleButton-root": {
-                  borderRadius: 2,
-                  px: 2,
-                  py: 0.7,
-                  textTransform: "none",
-                  fontWeight: "600",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                  justifyContent: "flex-start",
-                },
-                "& .MuiToggleButton-root + .MuiToggleButton-root": {
-                  mt: 1,
-                },
-              }}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-              <ToggleButton value={ProgressFilter.All}>
-                {uiText.dashboard.progressAll}
-              </ToggleButton>
-              <ToggleButton value={ProgressFilter.Unread}>
-                {uiText.dashboard.progressUnread}
-              </ToggleButton>
-              <ToggleButton value={ProgressFilter.InProgress}>
-                {uiText.dashboard.progressInProgress}
-              </ToggleButton>
-              <ToggleButton value={ProgressFilter.Completed}>
-                {uiText.dashboard.progressCompleted}
-              </ToggleButton>
-            </ToggleButtonGroup>
+              {[
+                ProgressFilter.All,
+                ProgressFilter.Unread,
+                ProgressFilter.InProgress,
+                ProgressFilter.Completed,
+              ].map((value) => (
+                <AppButton
+                  key={value}
+                  variant={selectedProgress === value ? "contained" : "outlined"}
+                  size="small"
+                  alignLabelLeft
+                  aria-pressed={selectedProgress === value}
+                  onClick={() => setSelectedProgress(value)}
+                  sx={filterButtonSx}
+                >
+                  {value === ProgressFilter.All
+                    ? uiText.dashboard.progressAll
+                    : value === ProgressFilter.Unread
+                      ? uiText.dashboard.progressUnread
+                      : value === ProgressFilter.InProgress
+                        ? uiText.dashboard.progressInProgress
+                        : uiText.dashboard.progressCompleted}
+                </AppButton>
+              ))}
+            </Box>
           </Box>
         </Paper>
       </Collapse>
@@ -473,17 +432,6 @@ export function Dashboard({
                         }}
                       />
 
-                      <Chip
-                        label={<Translatable>{story.category}</Translatable>}
-                        size="small"
-                        variant="outlined"
-                        sx={{
-                          fontWeight: "700",
-                          fontSize: "0.75rem",
-                          fontFamily: "Inter, system-ui, sans-serif",
-                        }}
-                      />
-
                       {isCompleted ? (
                         <Chip
                           icon={
@@ -577,6 +525,10 @@ export function Dashboard({
                         {
                           icon: <Layers sx={{ fontSize: 16 }} />,
                           label: uiLabel.wordCount(story.wordCount),
+                        },
+                        {
+                          icon: <LocalOffer sx={{ fontSize: 16 }} />,
+                          label: story.category,
                         },
                         {
                           icon: <CheckCircle sx={{ fontSize: 16 }} />,
