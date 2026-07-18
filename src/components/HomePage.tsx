@@ -99,23 +99,6 @@ export function HomePage({
               >
                 {uiText.dashboard.ctaStartReading}
               </AppButton>
-
-              <AppButton
-                variant="outlined"
-                onClick={() => {
-                  if (suggestedStories.length < 2 || isLastSuggestedStory) {
-                    setSuggestedStoryIndex(0);
-                    return;
-                  }
-
-                  setSuggestedStoryIndex((prev) => prev + 1);
-                }}
-                sx={{ textTransform: "none", fontWeight: "700" }}
-              >
-                {suggestedStories.length < 2 || isLastSuggestedStory
-                  ? uiText.inProgressPage.resetSuggestions
-                  : uiText.storyReader.nextSentence}
-              </AppButton>
             </Box>
           </Box>
         ) : (
@@ -149,7 +132,6 @@ export function HomePage({
                 {uiText.inProgressPage.emptyDescription}
               </Translatable>
             </Typography>
-
           </Paper>
         )
       ) : activeInProgressStory ? (

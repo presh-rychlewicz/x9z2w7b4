@@ -2,7 +2,6 @@ import {
   AccessTime,
   CheckCircle,
   ChevronRight,
-  Layers,
   MenuBook,
   RadioButtonUnchecked,
 } from "@mui/icons-material";
@@ -192,15 +191,11 @@ export function StoryCard({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+              gridTemplateColumns: "1fr",
               gap: 1.5,
             }}
           >
             {[
-              {
-                icon: <Layers sx={{ fontSize: 16 }} />,
-                label: uiLabel.wordCount(story.wordCount),
-              },
               {
                 icon: <CheckCircle sx={{ fontSize: 16 }} />,
                 label: `${uiText.dashboard.storyProgressLabel} ${uiLabel.storyProgress(safeCompletedSentences, totalSentences)}`,

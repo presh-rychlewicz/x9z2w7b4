@@ -13,7 +13,6 @@ export const uiText = {
     continueReading: "Continue Reading",
     emptyTitle: "No in-progress stories yet",
     emptyDescription: "Start reading a story to see it appear in this list.",
-    resetSuggestions: "Reset",
   },
   devPage: {
     backToApp: "Back to App",
@@ -34,10 +33,8 @@ export const uiText = {
     showFilters: "Show Filters",
     hideFilters: "Hide Filters",
     levelLabel: "Level",
-    categoryLabel: "Category",
     progressLabel: "Progress",
     difficultyAriaLabel: "difficulty filter",
-    categoryAriaLabel: "category filter",
     progressAriaLabel: "progress filter",
     difficultyAll: "All Levels",
     difficultyBeginner: "Beginner",

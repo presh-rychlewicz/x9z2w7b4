@@ -5,7 +5,6 @@ interface StorySeedJson {
   id: string;
   title: string;
   difficulty: string;
-  category?: string;
   synopsis: string;
   sentences: string[];
 }
@@ -20,7 +19,6 @@ function toStorySeed(raw: {
   id: string;
   title: string;
   difficulty: string;
-  category?: string;
   synopsis: string;
   sentences: string[];
 }): StorySeed {
@@ -34,7 +32,6 @@ function toStorySeed(raw: {
     id: raw.id,
     title: raw.title,
     difficulty,
-    category: raw.category?.trim() || "General",
     synopsis: raw.synopsis,
     sentences: raw.sentences,
   };

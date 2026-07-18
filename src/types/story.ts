@@ -2,7 +2,6 @@ export interface Story {
   id: string;
   title: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
-  category: string;
   synopsis: string;
   sentences: string[];
   wordCount: number;
