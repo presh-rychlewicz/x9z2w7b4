@@ -3,7 +3,6 @@ import {
   Brightness7,
   Check,
   ConstructionRounded,
-  School,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -47,7 +46,12 @@ export function Navbar({
             gap: 1,
           }}
         >
-          <School color="primary" />
+          <Box
+            component="img"
+            src="/favicon.svg"
+            alt={uiText.navbar.brandName}
+            sx={{ width: 24, height: 24, display: "block" }}
+          />
           <Typography
             variant="h6"
             sx={{
