@@ -190,32 +190,9 @@ export function StoryCard({
 
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 0.8,
-              color: "text.secondary",
-              mb: 2,
-            }}
-          >
-            <LocalOffer sx={{ fontSize: 16 }} />
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: "600",
-                fontFamily: "Inter, system-ui, sans-serif",
-              }}
-            >
-              <Translatable>{story.category}</Translatable>
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              gap: 2.5,
+              display: "grid",
+              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+              gap: 1.5,
             }}
           >
             {[
@@ -226,6 +203,10 @@ export function StoryCard({
               {
                 icon: <Layers sx={{ fontSize: 16 }} />,
                 label: uiLabel.wordCount(story.wordCount),
+              },
+              {
+                icon: <LocalOffer sx={{ fontSize: 16 }} />,
+                label: story.category,
               },
               {
                 icon: <CheckCircle sx={{ fontSize: 16 }} />,
@@ -240,6 +221,7 @@ export function StoryCard({
                   alignItems: "center",
                   gap: 0.8,
                   color: "text.secondary",
+                  minWidth: 0,
                 }}
               >
                 {icon}
