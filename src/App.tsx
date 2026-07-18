@@ -1,81 +1,88 @@
-import { useState } from 'react'
-import { Container, Typography, Box, Button, CssBaseline, ThemeProvider, createTheme } from '@mui/material'
-
-// Create a premium, dark-mode themed layout
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#aa3bff', // Purple accent
-    },
-    background: {
-      default: '#121214',
-      paper: '#1a1a1e',
-    },
-  },
-  typography: {
-    fontFamily: 'Inter, system-ui, sans-serif',
-  },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        '*, *::before, *::after': {
-          boxSizing: 'border-box',
-        },
-        html: {
-          maxWidth: '100%',
-          overflowX: 'hidden',
-          boxSizing: 'border-box',
-        },
-        body: {
-          maxWidth: '100%',
-          overflowX: 'hidden',
-          boxSizing: 'border-box',
-          margin: 0,
-          padding: 0,
-        },
-        '#root': {
-          maxWidth: '100%',
-          overflowX: 'hidden',
-        },
-      },
-    },
-  },
-})
+import { useState, useMemo } from 'react'
+import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material'
+import { Navbar } from './components/Navbar'
+import { Dashboard } from './components/Dashboard'
+import { StoryReader } from './components/StoryReader'
+import { stories } from './storiesData'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('dark')
+  const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null)
+  const [fontFamily, setFontFamily] = useState<'sans-serif' | 'serif'>('serif')
+
+  // Theme setup
+  const theme = useMemo(() =>
+    createTheme({
+      palette: {
+        mode: themeMode,
+        primary: {
+          main: '#aa3bff', // Purple accent
+        },
+        background: {
+          default: themeMode === 'dark' ? '#121214' : '#f8f9fa',
+          paper: themeMode === 'dark' ? '#1a1a1e' : '#ffffff',
+        },
+      },
+      typography: {
+        fontFamily: fontFamily === 'sans-serif' ? 'Inter, system-ui, sans-serif' : 'Georgia, "Times New Roman", serif',
+      },
+      components: {
+        MuiCssBaseline: {
+          styleOverrides: {
+            '*, *::before, *::after': {
+              boxSizing: 'border-box',
+            },
+            html: {
+              maxWidth: '100%',
+              overflowX: 'hidden',
+              boxSizing: 'border-box',
+            },
+            body: {
+              maxWidth: '100%',
+              overflowX: 'hidden',
+              boxSizing: 'border-box',
+              margin: 0,
+              padding: 0,
+            },
+            '#root': {
+              maxWidth: '100%',
+              overflowX: 'hidden',
+            },
+          },
+        },
+      },
+    }),
+    [themeMode, fontFamily]
+  )
+
+  const activeStory = useMemo(() => {
+    return stories.find((s) => s.id === selectedStoryId) || null
+  }, [selectedStoryId])
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="sm">
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '100vh',
-            textAlign: 'center',
-            gap: 3,
-          }}
-        >
-          <Typography variant="h3" sx={{ fontWeight: 'bold' }} gutterBottom>
-            Welcome to MUI
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Your Vite + React template has been configured to use Material UI exclusively.
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setCount((prev) => prev + 1)}
-            sx={{ px: 4, py: 1.5, borderRadius: 2 }}
-          >
-            Count: {count}
-          </Button>
-        </Box>
+      
+      <Navbar 
+        themeMode={themeMode} 
+        onToggleTheme={() => setThemeMode((prev) => (prev === 'light' ? 'dark' : 'light'))} 
+        onReset={() => setSelectedStoryId(null)}
+      />
+
+      <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, md: 3 } }}>
+        {!activeStory ? (
+          <Dashboard 
+            stories={stories} 
+            onSelectStory={setSelectedStoryId} 
+          />
+        ) : (
+          <StoryReader 
+            story={activeStory} 
+            onBack={() => setSelectedStoryId(null)}
+            fontFamily={fontFamily}
+            onChangeFontFamily={setFontFamily}
+          />
+        )}
       </Container>
     </ThemeProvider>
   )
