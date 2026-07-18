@@ -1,9 +1,4 @@
-import {
-  Container,
-  CssBaseline,
-  ThemeProvider,
-  createTheme,
-} from "@mui/material";
+import { Container, CssBaseline, ThemeProvider } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import { Dashboard } from "./components/Dashboard";
 import { DevPage } from "./components/DevPage";
@@ -11,6 +6,15 @@ import { InProgressPage } from "./components/InProgressPage";
 import { Navbar } from "./components/Navbar";
 import { StoryReader } from "./components/StoryReader";
 import { stories } from "./storiesData";
+import { createAppTheme } from "./theme/appTheme";
+
+const AppPage = {
+  Main: "main",
+  Dev: "dev",
+  InProgress: "inProgress",
+} as const;
+
+type AppPage = (typeof AppPage)[keyof typeof AppPage];
 
 function App() {
   const isDevelopment = import.meta.env.DEV;
@@ -25,13 +29,11 @@ function App() {
       return "dark";
     }
   });
-  const [activePage, setActivePage] = useState<"main" | "dev" | "inProgress">(
-    "inProgress",
-  );
+  const [activePage, setActivePage] = useState<AppPage>(AppPage.InProgress);
   const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
-  const [storyReturnPage, setStoryReturnPage] = useState<
-    "main" | "dev" | "inProgress"
-  >("inProgress");
+  const [storyReturnPage, setStoryReturnPage] = useState<AppPage>(
+    AppPage.InProgress,
+  );
   const [startStoryFromCover, setStartStoryFromCover] = useState(false);
   const [showStoryTranslations, setShowStoryTranslations] = useState(() => {
     try {
@@ -119,106 +121,7 @@ function App() {
     });
   }, []);
 
-  // Theme setup
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: themeMode,
-          primary: {
-            main: "#aa3bff", // Purple accent
-          },
-          background: {
-            default: themeMode === "dark" ? "#121214" : "#f8f9fa",
-            paper: themeMode === "dark" ? "#1a1a1e" : "#ffffff",
-          },
-        },
-        typography: {
-          fontFamily:
-            "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-        },
-        components: {
-          MuiCssBaseline: {
-            styleOverrides: {
-              "*, *::before, *::after": {
-                boxSizing: "border-box",
-                userSelect: "none",
-                WebkitUserSelect: "none",
-              },
-              html: {
-                maxWidth: "100%",
-                overflowX: "hidden",
-                boxSizing: "border-box",
-                userSelect: "none",
-                WebkitUserSelect: "none",
-              },
-              body: {
-                maxWidth: "100%",
-                overflowX: "hidden",
-                boxSizing: "border-box",
-                margin: 0,
-                padding: 0,
-                userSelect: "none",
-                WebkitUserSelect: "none",
-              },
-              "#root": {
-                maxWidth: "100%",
-                overflowX: "hidden",
-                userSelect: "none",
-                WebkitUserSelect: "none",
-              },
-            },
-          },
-          MuiButton: {
-            styleOverrides: {
-              root: {
-                minHeight: 44,
-                paddingTop: 10,
-                paddingBottom: 10,
-                paddingLeft: 16,
-                paddingRight: 16,
-              },
-              sizeSmall: {
-                minHeight: 40,
-                paddingTop: 8,
-                paddingBottom: 8,
-              },
-            },
-          },
-          MuiIconButton: {
-            styleOverrides: {
-              root: {
-                minWidth: 44,
-                minHeight: 44,
-                padding: 10,
-              },
-              sizeSmall: {
-                minWidth: 40,
-                minHeight: 40,
-                padding: 8,
-              },
-            },
-          },
-          MuiToggleButton: {
-            styleOverrides: {
-              root: {
-                minHeight: 44,
-                paddingTop: 10,
-                paddingBottom: 10,
-                paddingLeft: 14,
-                paddingRight: 14,
-              },
-              sizeSmall: {
-                minHeight: 40,
-                paddingTop: 8,
-                paddingBottom: 8,
-              },
-            },
-          },
-        },
-      }),
-    [themeMode],
-  );
+  const theme = useMemo(() => createAppTheme(themeMode), [themeMode]);
 
   const activeStory = useMemo(() => {
     return stories.find((s) => s.id === selectedStoryId) || null;
@@ -247,6 +150,47 @@ function App() {
     }
   }, [activeStory, storyProgressById, handleStoryProgressChange]);
 
+  const renderPage = () => {
+    if (activeStory) {
+      return (
+        <StoryReader
+          story={activeStory}
+          onBack={handleCloseStory}
+          initialCompletedSentences={storyProgressById[activeStory.id] ?? 0}
+          onProgressChange={handleActiveStoryProgressChange}
+          startFromCover={startStoryFromCover}
+          onCoverNext={handleCoverNext}
+          showStoryTranslations={showStoryTranslations}
+          onToggleStoryTranslations={handleToggleStoryTranslations}
+        />
+      );
+    }
+
+    switch (activePage) {
+      case AppPage.Dev:
+        return <DevPage onBack={() => setActivePage(AppPage.InProgress)} />;
+      case AppPage.InProgress:
+        return (
+          <InProgressPage
+            stories={stories}
+            storyProgressById={storyProgressById}
+            onSelectStory={handleOpenStory}
+            onOpenMainList={() => setActivePage(AppPage.Main)}
+          />
+        );
+      case AppPage.Main:
+      default:
+        return (
+          <Dashboard
+            stories={stories}
+            onSelectStory={handleOpenStory}
+            storyProgressById={storyProgressById}
+            onBackToInProgress={() => setActivePage(AppPage.InProgress)}
+          />
+        );
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -256,44 +200,17 @@ function App() {
         onToggleTheme={handleToggleTheme}
         onOpenMainList={() => {
           setSelectedStoryId(null);
-          setActivePage("main");
+          setActivePage(AppPage.Main);
         }}
         showDevButton={isDevelopment}
         onOpenDevPage={() => {
           setSelectedStoryId(null);
-          setActivePage("dev");
+          setActivePage(AppPage.Dev);
         }}
       />
 
       <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, md: 3 } }}>
-        {activePage === "dev" ? (
-          <DevPage onBack={() => setActivePage("inProgress")} />
-        ) : activeStory ? (
-          <StoryReader
-            story={activeStory}
-            onBack={handleCloseStory}
-            initialCompletedSentences={storyProgressById[activeStory.id] ?? 0}
-            onProgressChange={handleActiveStoryProgressChange}
-            startFromCover={startStoryFromCover}
-            onCoverNext={handleCoverNext}
-            showStoryTranslations={showStoryTranslations}
-            onToggleStoryTranslations={handleToggleStoryTranslations}
-          />
-        ) : activePage === "inProgress" ? (
-          <InProgressPage
-            stories={stories}
-            storyProgressById={storyProgressById}
-            onSelectStory={handleOpenStory}
-            onOpenMainList={() => setActivePage("main")}
-          />
-        ) : (
-          <Dashboard
-            stories={stories}
-            onSelectStory={handleOpenStory}
-            storyProgressById={storyProgressById}
-            onBackToInProgress={() => setActivePage("inProgress")}
-          />
-        )}
+        {renderPage()}
       </Container>
     </ThemeProvider>
   );
