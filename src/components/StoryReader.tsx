@@ -317,6 +317,16 @@ export function StoryReader({
                   }}
                 >
                   <LevelPill difficulty={story.difficulty} />
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      fontFamily: "Inter, system-ui, sans-serif",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <Translatable>{uiLabel.wordCount(story.wordCount)}</Translatable>
+                  </Typography>
                 </Box>
               </Box>
             ) : (

@@ -5,7 +5,7 @@ import {
   MenuBook,
   RadioButtonUnchecked,
 } from "@mui/icons-material";
-import { Avatar, Box, Card, Chip, Typography } from "@mui/material";
+import { Avatar, Box, Card, Chip, Stack, Typography } from "@mui/material";
 import { uiLabel, uiText } from "../constants/uiText";
 import type { Story } from "../types/story";
 import AppButton from "./AppButton";
@@ -100,14 +100,11 @@ export function StoryCard({
         </Avatar>
 
         <Box>
-          <Box
+          <Stack
+            spacing={1.5}
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              alignItems: "center",
-              gap: 1.5,
-              mb: 1,
+              justifyContent: "center",
+              marginBottom: 1,
             }}
           >
             <Typography
@@ -122,58 +119,62 @@ export function StoryCard({
               <Translatable>{story.title}</Translatable>
             </Typography>
 
-            <LevelPill difficulty={story.difficulty} />
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <LevelPill difficulty={story.difficulty} />
 
-            {isCompleted ? (
-              <Chip
-                icon={<CheckCircle style={{ fontSize: 14, color: "#666" }} />}
-                label={
-                  <Translatable>{uiText.dashboard.cardCompleted}</Translatable>
-                }
-                size="small"
-                variant="outlined"
-                sx={{
-                  fontWeight: "600",
-                  fontSize: "0.75rem",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                }}
-              />
-            ) : isInProgress ? (
-              <Chip
-                icon={<AccessTime style={{ fontSize: 14, color: "#666" }} />}
-                label={
-                  <Translatable>
-                    {uiText.dashboard.progressInProgress}
-                  </Translatable>
-                }
-                size="small"
-                variant="outlined"
-                sx={{
-                  fontWeight: "600",
-                  fontSize: "0.75rem",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                }}
-              />
-            ) : (
-              <Chip
-                icon={
-                  <RadioButtonUnchecked
-                    style={{ fontSize: 14, color: "#666" }}
-                  />
-                }
-                label={
-                  <Translatable>{uiText.dashboard.cardUnread}</Translatable>
-                }
-                size="small"
-                variant="outlined"
-                sx={{
-                  fontWeight: "600",
-                  fontSize: "0.75rem",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                }}
-              />
-            )}
-          </Box>
+              {isCompleted ? (
+                <Chip
+                  icon={<CheckCircle style={{ fontSize: 14, color: "#666" }} />}
+                  label={
+                    <Translatable>
+                      {uiText.dashboard.cardCompleted}
+                    </Translatable>
+                  }
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    fontWeight: "600",
+                    fontSize: "0.75rem",
+                    fontFamily: "Inter, system-ui, sans-serif",
+                  }}
+                />
+              ) : isInProgress ? (
+                <Chip
+                  icon={<AccessTime style={{ fontSize: 14, color: "#666" }} />}
+                  label={
+                    <Translatable>
+                      {uiText.dashboard.progressInProgress}
+                    </Translatable>
+                  }
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    fontWeight: "600",
+                    fontSize: "0.75rem",
+                    fontFamily: "Inter, system-ui, sans-serif",
+                  }}
+                />
+              ) : (
+                <Chip
+                  icon={
+                    <RadioButtonUnchecked
+                      style={{ fontSize: 14, color: "#666" }}
+                    />
+                  }
+                  label={
+                    <Translatable>{uiText.dashboard.cardUnread}</Translatable>
+                  }
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    fontWeight: "600",
+                    fontSize: "0.75rem",
+                    fontFamily: "Inter, system-ui, sans-serif",
+                  }}
+                />
+              )}
+            </Stack>
+          </Stack>
 
           <Typography
             variant="body1"
@@ -199,6 +200,10 @@ export function StoryCard({
               {
                 icon: <CheckCircle sx={{ fontSize: 16 }} />,
                 label: `${uiText.dashboard.storyProgressLabel} ${uiLabel.storyProgress(safeCompletedSentences, totalSentences)}`,
+              },
+              {
+                icon: <MenuBook sx={{ fontSize: 16 }} />,
+                label: uiLabel.wordCount(story.wordCount),
               },
             ].map(({ icon, label }) => (
               <Box
