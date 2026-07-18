@@ -7,14 +7,7 @@ import {
   Visibility,
   VisibilityOff,
 } from "@mui/icons-material";
-import {
-  Box,
-  Chip,
-  Divider,
-  LinearProgress,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, LinearProgress, Paper, Typography } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { uiLabel, uiText } from "../constants/uiText";
 import type { Story } from "../types/story";
