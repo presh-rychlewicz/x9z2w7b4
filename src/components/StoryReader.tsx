@@ -9,7 +9,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from '@mui/material'
-import { ArrowBack, FormatSize, FontDownload } from '@mui/icons-material'
+import { ArrowBack, FormatSize, FontDownload, CheckCircle, RadioButtonUnchecked } from '@mui/icons-material'
 import type { Story } from '../storiesData'
 import { GlossaryPanel } from './GlossaryPanel'
 
@@ -18,13 +18,17 @@ interface StoryReaderProps {
   onBack: () => void
   fontFamily: 'sans-serif' | 'serif'
   onChangeFontFamily: (font: 'sans-serif' | 'serif') => void
+  isCompleted: boolean
+  onToggleComplete: () => void
 }
 
 export function StoryReader({ 
   story, 
   onBack, 
   fontFamily, 
-  onChangeFontFamily 
+  onChangeFontFamily,
+  isCompleted,
+  onToggleComplete
 }: StoryReaderProps) {
   const [fontSize, setFontSize] = useState<number>(20)
 
@@ -166,6 +170,27 @@ export function StoryReader({
                 {p}
               </Typography>
             ))}
+
+            <Divider sx={{ my: 4 }} />
+
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                variant={isCompleted ? "contained" : "outlined"}
+                color={isCompleted ? "success" : "primary"}
+                startIcon={isCompleted ? <CheckCircle /> : <RadioButtonUnchecked />}
+                onClick={onToggleComplete}
+                sx={{
+                  borderRadius: 3,
+                  px: 4,
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontWeight: '700',
+                  fontFamily: 'Inter, system-ui, sans-serif'
+                }}
+              >
+                {isCompleted ? "Mark as Unread" : "Mark as Completed"}
+              </Button>
+            </Box>
           </Paper>
         </Box>
 

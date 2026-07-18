@@ -9,6 +9,28 @@ function App() {
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>('dark')
   const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null)
   const [fontFamily, setFontFamily] = useState<'sans-serif' | 'serif'>('serif')
+  const [completedStoryIds, setCompletedStoryIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('completedStoryIds')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+
+  const handleToggleCompleteStory = (storyId: string) => {
+    setCompletedStoryIds((prev) => {
+      const next = prev.includes(storyId)
+        ? prev.filter((id) => id !== storyId)
+        : [...prev, storyId]
+      try {
+        localStorage.setItem('completedStoryIds', JSON.stringify(next))
+      } catch (err) {
+        console.error('Failed to save progress', err)
+      }
+      return next
+    })
+  }
 
   // Theme setup
   const theme = useMemo(() =>
@@ -74,6 +96,7 @@ function App() {
           <Dashboard 
             stories={stories} 
             onSelectStory={setSelectedStoryId} 
+            completedStoryIds={completedStoryIds}
           />
         ) : (
           <StoryReader 
@@ -81,6 +104,8 @@ function App() {
             onBack={() => setSelectedStoryId(null)}
             fontFamily={fontFamily}
             onChangeFontFamily={setFontFamily}
+            isCompleted={completedStoryIds.includes(activeStory.id)}
+            onToggleComplete={() => handleToggleCompleteStory(activeStory.id)}
           />
         )}
       </Container>
