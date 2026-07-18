@@ -325,7 +325,9 @@ export function StoryReader({
                       fontWeight: 600,
                     }}
                   >
-                    <Translatable>{uiLabel.wordCount(story.wordCount)}</Translatable>
+                    <Translatable>
+                      {uiLabel.wordCount(story.wordCount)}
+                    </Translatable>
                   </Typography>
                 </Box>
               </Box>

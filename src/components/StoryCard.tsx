@@ -191,8 +191,10 @@ export function StoryCard({
 
           <Box
             sx={{
-              display: "grid",
-              gridTemplateColumns: "1fr",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              flexWrap: "wrap",
               gap: 1.5,
             }}
           >
