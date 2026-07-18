@@ -19,7 +19,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { uiLabel, uiText } from "../constants/uiText";
 import type { Story } from "../types/story";
 import AppButton from "./AppButton";
-import CategoryPill from "./CategoryPill";
 import LevelPill from "./LevelPill";
 import Translatable, { translatePlainText } from "./Translatable";
 
@@ -324,19 +323,7 @@ export function StoryReader({
                     gap: 1,
                   }}
                 >
-                  <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
-                    <LevelPill difficulty={story.difficulty} />
-                    <Chip
-                      label={
-                        <Translatable>
-                          {uiLabel.minRead(story.readingTimeMin)}
-                        </Translatable>
-                      }
-                      variant="outlined"
-                      size="small"
-                    />
-                  </Box>
-                  <CategoryPill category={story.category} />
+                  <LevelPill difficulty={story.difficulty} />
                 </Box>
               </Box>
             ) : (

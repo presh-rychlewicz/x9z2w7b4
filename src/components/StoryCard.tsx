@@ -1,9 +1,7 @@
 import {
-  AccessTime,
   CheckCircle,
   ChevronRight,
   Layers,
-  LocalOffer,
   MenuBook,
   RadioButtonUnchecked,
 } from "@mui/icons-material";
@@ -199,16 +197,8 @@ export function StoryCard({
           >
             {[
               {
-                icon: <AccessTime sx={{ fontSize: 16 }} />,
-                label: uiLabel.minRead(story.readingTimeMin),
-              },
-              {
                 icon: <Layers sx={{ fontSize: 16 }} />,
                 label: uiLabel.wordCount(story.wordCount),
-              },
-              {
-                icon: <LocalOffer sx={{ fontSize: 16 }} />,
-                label: story.category,
               },
               {
                 icon: <CheckCircle sx={{ fontSize: 16 }} />,
