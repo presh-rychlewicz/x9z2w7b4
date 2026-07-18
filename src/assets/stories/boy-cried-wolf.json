@@ -2,6 +2,7 @@
   "id": "boy-cried-wolf",
   "title": "The Boy Who Cried Wolf",
   "difficulty": "Intermediate",
+  "category": "Honesty",
   "synopsis": "A bored young shepherd boy plays a series of tricks on his villagers. A story about the cost of lying.",
   "sentences": [
     "Once, there was a young shepherd boy who watched over a flock of sheep near a dark forest.",
@@ -21,37 +22,5 @@
     "They ignored his cries.",
     "No one came to help, and the wolf carried away many of the boy's sheep.",
     "The boy learned a bitter lesson: nobody believes a liar, even when they tell the truth."
-  ],
-  "glossary": [
-    {
-      "word": "shepherd",
-      "partOfSpeech": "noun",
-      "definition": "A person whose job is to take care of sheep.",
-      "example": "The shepherd guided the sheep back into the pen."
-    },
-    {
-      "word": "flock",
-      "partOfSpeech": "noun",
-      "definition": "A group of birds, sheep, or goats.",
-      "example": "A large flock of sheep grazed in the green valley."
-    },
-    {
-      "word": "entertain",
-      "partOfSpeech": "verb",
-      "definition": "To provide amusement or enjoyment to someone.",
-      "example": "The clown did tricks to entertain the children."
-    },
-    {
-      "word": "scolded",
-      "partOfSpeech": "verb",
-      "definition": "Angrily pointed out someone's mistakes or bad behavior.",
-      "example": "The teacher scolded the students for talking during the exam."
-    },
-    {
-      "word": "ignored",
-      "partOfSpeech": "verb",
-      "definition": "Refused to take notice of or pay attention to someone or something.",
-      "example": "He ignored the warning signs and drove into the flooded road."
-    }
   ]
 }

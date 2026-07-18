@@ -2,6 +2,7 @@
   "id": "tortoise-hare",
   "title": "The Tortoise and the Hare",
   "difficulty": "Beginner",
+  "category": "Perseverance",
   "synopsis": "A fast hare and a slow tortoise decide to have a race. A classic story about patience and hard work.",
   "sentences": [
     "Once upon a time, there was a Hare who loved to boast about how fast he could run.",
@@ -20,37 +21,5 @@
     "When the Hare finally woke up, he ran as fast as he could to the finish.",
     "But to his surprise, the Tortoise had already crossed the line.",
     "The slow and steady Tortoise had won the race!"
-  ],
-  "glossary": [
-    {
-      "word": "boast",
-      "partOfSpeech": "verb",
-      "definition": "To talk with excessive pride about oneself or one's achievements.",
-      "example": "He liked to boast about how many goals he scored."
-    },
-    {
-      "word": "bragging",
-      "partOfSpeech": "noun / verb",
-      "definition": "Saying how good you are at something in an annoying way.",
-      "example": "Stop bragging about your high grades."
-    },
-    {
-      "word": "challenge",
-      "partOfSpeech": "verb",
-      "definition": "To invite someone to compete in a game or fight.",
-      "example": "I want to challenge you to a game of chess."
-    },
-    {
-      "word": "sprint",
-      "partOfSpeech": "verb",
-      "definition": "To run at full speed over a short distance.",
-      "example": "The athlete had to sprint to catch up to the leader."
-    },
-    {
-      "word": "steadily",
-      "partOfSpeech": "adverb",
-      "definition": "In a regular, consistent, and even way.",
-      "example": "She walked steadily up the steep hill."
-    }
   ]
 }

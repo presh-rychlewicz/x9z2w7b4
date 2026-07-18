@@ -1,5 +1,5 @@
-import { ArrowBack } from "@mui/icons-material";
-import { Box } from "@mui/material";
+import { ArrowBack, DeleteSweep } from "@mui/icons-material";
+import { Box, Paper, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { uiText } from "../constants/uiText";
 import uiTranslations from "../i18n/uiTranslations";
@@ -50,20 +50,7 @@ function collectMissingWords(strings: string[]) {
 
 function collectStoryStrings() {
   return stories.flatMap((story) => {
-    const glossaryStrings = story.glossary.flatMap((item) => [
-      item.word,
-      item.partOfSpeech,
-      item.definition,
-      item.example,
-    ]);
-
-    return [
-      story.title,
-      story.difficulty,
-      story.synopsis,
-      ...story.sentences,
-      ...glossaryStrings,
-    ];
+    return [story.title, story.difficulty, story.synopsis, ...story.sentences];
   });
 }
 
@@ -84,6 +71,14 @@ async function copyTextToClipboard(text: string) {
 }
 
 export function DevPage({ onBack }: DevPageProps) {
+  const handleClearLocalData = () => {
+    const confirmed = window.confirm(uiText.devPage.clearLocalDataConfirm);
+    if (!confirmed) return;
+
+    localStorage.clear();
+    window.location.reload();
+  };
+
   const uiStringStats = useMemo(() => {
     const allUiStrings = collectStrings(uiText);
     const missingTranslationsCount = allUiStrings.filter((text) =>
@@ -201,6 +196,46 @@ export function DevPage({ onBack }: DevPageProps) {
               : undefined
           }
         />
+
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 2, md: 3 },
+            borderRadius: 2.5,
+            border: "1px solid",
+            borderColor: "warning.light",
+            bgcolor: "warning.50",
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            sx={{
+              mb: 0.5,
+              fontWeight: 700,
+              fontFamily: "Inter, system-ui, sans-serif",
+            }}
+          >
+            {uiText.devPage.clearLocalData}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mb: 2, fontFamily: "Inter, system-ui, sans-serif" }}
+          >
+            {uiText.devPage.clearLocalDataDescription}
+          </Typography>
+
+          <AppButton
+            fullWidth
+            variant="outlined"
+            color="warning"
+            startIcon={<DeleteSweep />}
+            onClick={handleClearLocalData}
+            sx={{ textTransform: "none", fontWeight: "700" }}
+          >
+            {uiText.devPage.clearLocalData}
+          </AppButton>
+        </Paper>
       </Box>
     </Box>
   );

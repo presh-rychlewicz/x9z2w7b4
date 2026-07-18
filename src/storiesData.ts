@@ -5,9 +5,9 @@ interface StorySeedJson {
   id: string;
   title: string;
   difficulty: string;
+  category?: string;
   synopsis: string;
   sentences: string[];
-  glossary: StorySeed["glossary"];
 }
 
 const ALLOWED_DIFFICULTIES = new Set<Story["difficulty"]>([
@@ -20,9 +20,9 @@ function toStorySeed(raw: {
   id: string;
   title: string;
   difficulty: string;
+  category?: string;
   synopsis: string;
   sentences: string[];
-  glossary: StorySeed["glossary"];
 }): StorySeed {
   const difficulty: Story["difficulty"] = ALLOWED_DIFFICULTIES.has(
     raw.difficulty as Story["difficulty"],
@@ -34,9 +34,9 @@ function toStorySeed(raw: {
     id: raw.id,
     title: raw.title,
     difficulty,
+    category: raw.category?.trim() || "General",
     synopsis: raw.synopsis,
     sentences: raw.sentences,
-    glossary: raw.glossary,
   };
 }
 

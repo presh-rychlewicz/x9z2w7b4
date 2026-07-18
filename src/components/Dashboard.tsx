@@ -1,22 +1,24 @@
 import {
   AccessTime,
+  ArrowBack,
   CheckCircle,
   ChevronRight,
+  ExpandLess,
+  ExpandMore,
   FilterList,
   Layers,
+  LocalOffer,
   MenuBook,
   RadioButtonUnchecked,
-  School,
-  Search,
 } from "@mui/icons-material";
 import {
   Avatar,
   Box,
   Card,
   Chip,
+  Collapse,
   Divider,
   Paper,
-  TextField,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -30,46 +32,79 @@ import Translatable from "./Translatable";
 
 interface DashboardProps {
   stories: Story[];
-  onSelectStory: (id: string) => void;
-  completedStoryIds: string[];
+  onSelectStory: (id: string, options?: { startFromCover?: boolean }) => void;
+  storyProgressById: Record<string, number>;
+  onBackToInProgress?: () => void;
 }
 
 export function Dashboard({
   stories,
   onSelectStory,
-  completedStoryIds,
+  storyProgressById,
+  onBackToInProgress,
 }: DashboardProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const difficultyRank: Record<Story["difficulty"], number> = {
+    Beginner: 0,
+    Intermediate: 1,
+    Advanced: 2,
+  };
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<DifficultyFilter>(DifficultyFilter.All);
   const [selectedProgress, setSelectedProgress] = useState<ProgressFilter>(
     ProgressFilter.All,
   );
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [areFiltersCollapsed, setAreFiltersCollapsed] = useState(true);
+
+  const categoryOptions = useMemo(() => {
+    const categories = Array.from(
+      new Set(stories.map((story) => story.category)),
+    );
+    categories.sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" }),
+    );
+    return ["All", ...categories];
+  }, [stories]);
 
   const filteredStories = useMemo(() => {
-    return stories.filter((story) => {
-      const matchesSearch =
-        story.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        story.synopsis.toLowerCase().includes(searchQuery.toLowerCase());
+    return stories
+      .filter((story) => {
+        const matchesDifficulty =
+          selectedDifficulty === DifficultyFilter.All ||
+          story.difficulty === selectedDifficulty;
+        const matchesCategory =
+          selectedCategory === "All" || story.category === selectedCategory;
 
-      const matchesDifficulty =
-        selectedDifficulty === DifficultyFilter.All ||
-        story.difficulty === selectedDifficulty;
+        const totalSentences = story.sentences.length;
+        const completedSentences = Math.min(
+          storyProgressById[story.id] ?? 0,
+          totalSentences,
+        );
+        const isCompleted = completedSentences >= totalSentences;
+        const isInProgress = completedSentences > 0 && !isCompleted;
+        const matchesProgress =
+          selectedProgress === ProgressFilter.All ||
+          (selectedProgress === ProgressFilter.Completed && isCompleted) ||
+          (selectedProgress === ProgressFilter.InProgress && isInProgress) ||
+          (selectedProgress === ProgressFilter.Unread && !isCompleted);
 
-      const isCompleted = completedStoryIds.includes(story.id);
-      const matchesProgress =
-        selectedProgress === ProgressFilter.All ||
-        (selectedProgress === ProgressFilter.Completed && isCompleted) ||
-        (selectedProgress === ProgressFilter.Unread && !isCompleted);
-
-      return matchesSearch && matchesDifficulty && matchesProgress;
-    });
+        return matchesDifficulty && matchesCategory && matchesProgress;
+      })
+      .sort((a, b) => {
+        const rankDiff =
+          difficultyRank[a.difficulty] - difficultyRank[b.difficulty];
+        if (rankDiff !== 0) return rankDiff;
+        return a.title.localeCompare(b.title, undefined, {
+          sensitivity: "base",
+        });
+      });
   }, [
     stories,
-    searchQuery,
     selectedDifficulty,
+    selectedCategory,
     selectedProgress,
-    completedStoryIds,
+    storyProgressById,
+    difficultyRank,
   ]);
 
   const getDifficultyStyle = (diff: string) => {
@@ -94,251 +129,257 @@ export function Dashboard({
 
   return (
     <Box>
-      {/* Welcome Header */}
-      <Box sx={{ mb: 5, textAlign: "center" }}>
-        <Box
-          sx={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 1,
-            px: 2,
-            py: 0.5,
-            borderRadius: 5,
-            mb: 2,
-            border: "1px solid",
-            borderColor: "primary.light",
-          }}
+      {onBackToInProgress ? (
+        <AppButton
+          variant="outlined"
+          startIcon={<ArrowBack />}
+          onClick={onBackToInProgress}
+          sx={{ mb: 2, textTransform: "none", fontWeight: "600" }}
         >
-          <School color="primary" sx={{ fontSize: 18 }} />
-          <Typography
-            variant="caption"
-            color="primary"
-            sx={{
-              fontWeight: "700",
-              fontFamily: "Inter, system-ui, sans-serif",
-              letterSpacing: 1,
-            }}
-          >
-            <Translatable>{uiText.dashboard.badge}</Translatable>
-          </Typography>
-        </Box>
+          {uiText.dashboard.backToInProgress}
+        </AppButton>
+      ) : null}
 
-        <Typography
-          variant="h3"
-          component="h1"
-          sx={{
-            fontWeight: "800",
-            fontFamily: "Inter, system-ui, sans-serif",
-            mb: 2,
-            letterSpacing: "-0.02em",
-            background: "linear-gradient(45deg, #aa3bff 30%, #ff8e53 90%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          <Translatable>{uiText.dashboard.title}</Translatable>
-        </Typography>
-
-        <Typography
-          variant="h6"
-          color="text.secondary"
-          sx={{
-            fontFamily: "Inter, system-ui, sans-serif",
-            maxWidth: 680,
-            mx: "auto",
-            fontWeight: "400",
-            lineHeight: 1.6,
-          }}
-        >
-          <Translatable>{uiText.dashboard.subtitle}</Translatable>
-        </Typography>
-      </Box>
-
-      {/* Filter Controls */}
-      <Paper
-        elevation={0}
+      <AppButton
+        variant="outlined"
+        fullWidth
+        onClick={() => setAreFiltersCollapsed((prev) => !prev)}
+        endIcon={areFiltersCollapsed ? <ExpandMore /> : <ExpandLess />}
         sx={{
-          p: 3,
-          mb: 4,
-          borderRadius: 3,
-          border: "1px solid",
-          borderColor: "divider",
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
+          mb: 2,
+          borderRadius: 2,
+          textTransform: "none",
+          fontWeight: "700",
+          fontFamily: "Inter, system-ui, sans-serif",
+          justifyContent: "space-between",
         }}
       >
-        {/* Search */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <Search color="action" sx={{ flexShrink: 0 }} />
-            <Typography
-              variant="body2"
-              sx={{ fontWeight: "600", fontFamily: "Inter, sans-serif" }}
+        {areFiltersCollapsed
+          ? uiText.dashboard.showFilters
+          : uiText.dashboard.hideFilters}
+      </AppButton>
+
+      {/* Filter Controls */}
+      <Collapse in={!areFiltersCollapsed}>
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            mb: 4,
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          {/* Level filter */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 1,
+              }}
             >
-              <Translatable>{uiText.dashboard.searchLabel}</Translatable>
-            </Typography>
+              <FilterList color="action" sx={{ flexShrink: 0 }} />
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "600", fontFamily: "Inter, sans-serif" }}
+              >
+                <Translatable>{uiText.dashboard.levelLabel}</Translatable>
+              </Typography>
+            </Box>
+
+            <ToggleButtonGroup
+              value={selectedDifficulty}
+              exclusive
+              onChange={(_, val) => {
+                if (Object.values(DifficultyFilter).includes(val)) {
+                  setSelectedDifficulty(val as DifficultyFilter);
+                }
+              }}
+              orientation="vertical"
+              size="small"
+              aria-label={uiText.dashboard.difficultyAriaLabel}
+              sx={{
+                alignItems: "stretch",
+                "& .MuiToggleButtonGroup-grouped": {
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2,
+                },
+                "& .MuiToggleButton-root": {
+                  borderRadius: 2,
+                  px: 2,
+                  py: 0.7,
+                  textTransform: "none",
+                  fontWeight: "600",
+                  fontFamily: "Inter, system-ui, sans-serif",
+                  justifyContent: "flex-start",
+                },
+                "& .MuiToggleButton-root + .MuiToggleButton-root": {
+                  mt: 1,
+                },
+              }}
+            >
+              <ToggleButton value={DifficultyFilter.All}>
+                {uiText.dashboard.difficultyAll}
+              </ToggleButton>
+              <ToggleButton value={DifficultyFilter.Beginner}>
+                {uiText.dashboard.difficultyBeginner}
+              </ToggleButton>
+              <ToggleButton value={DifficultyFilter.Intermediate}>
+                {uiText.dashboard.difficultyIntermediate}
+              </ToggleButton>
+            </ToggleButtonGroup>
           </Box>
 
-          <TextField
-            placeholder={uiText.dashboard.searchPlaceholder}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            size="small"
-            fullWidth
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 2.5,
-                fontFamily: "Inter, system-ui, sans-serif",
-              },
-            }}
-          />
-        </Box>
+          <Divider />
 
-        <Divider />
-
-        {/* Level filter */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <FilterList color="action" sx={{ flexShrink: 0 }} />
-            <Typography
-              variant="body2"
-              sx={{ fontWeight: "600", fontFamily: "Inter, sans-serif" }}
+          {/* Category filter */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 1,
+              }}
             >
-              <Translatable>{uiText.dashboard.levelLabel}</Translatable>
-            </Typography>
+              <LocalOffer color="action" sx={{ flexShrink: 0 }} />
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "600", fontFamily: "Inter, sans-serif" }}
+              >
+                <Translatable>{uiText.dashboard.categoryLabel}</Translatable>
+              </Typography>
+            </Box>
+
+            <ToggleButtonGroup
+              value={selectedCategory}
+              exclusive
+              onChange={(_, val) => {
+                if (typeof val === "string") {
+                  setSelectedCategory(val);
+                }
+              }}
+              orientation="vertical"
+              size="small"
+              aria-label={uiText.dashboard.categoryAriaLabel}
+              sx={{
+                alignItems: "stretch",
+                "& .MuiToggleButtonGroup-grouped": {
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2,
+                },
+                "& .MuiToggleButton-root": {
+                  borderRadius: 2,
+                  px: 2,
+                  py: 0.7,
+                  textTransform: "none",
+                  fontWeight: "600",
+                  fontFamily: "Inter, system-ui, sans-serif",
+                  justifyContent: "flex-start",
+                },
+                "& .MuiToggleButton-root + .MuiToggleButton-root": {
+                  mt: 1,
+                },
+              }}
+            >
+              {categoryOptions.map((category) => (
+                <ToggleButton key={category} value={category}>
+                  {category}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
           </Box>
 
-          <ToggleButtonGroup
-            value={selectedDifficulty}
-            exclusive
-            onChange={(_, val) => {
-              if (Object.values(DifficultyFilter).includes(val)) {
-                setSelectedDifficulty(val as DifficultyFilter);
-              }
-            }}
-            orientation="vertical"
-            size="small"
-            aria-label={uiText.dashboard.difficultyAriaLabel}
-            sx={{
-              alignItems: "stretch",
-              "& .MuiToggleButtonGroup-grouped": {
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 2,
-              },
-              "& .MuiToggleButton-root": {
-                borderRadius: 2,
-                px: 2,
-                py: 0.7,
-                textTransform: "none",
-                fontWeight: "600",
-                fontFamily: "Inter, system-ui, sans-serif",
-                justifyContent: "flex-start",
-              },
-              "& .MuiToggleButton-root + .MuiToggleButton-root": {
-                mt: 1,
-              },
-            }}
-          >
-            <ToggleButton value={DifficultyFilter.All}>
-              {uiText.dashboard.difficultyAll}
-            </ToggleButton>
-            <ToggleButton value={DifficultyFilter.Beginner}>
-              {uiText.dashboard.difficultyBeginner}
-            </ToggleButton>
-            <ToggleButton value={DifficultyFilter.Intermediate}>
-              {uiText.dashboard.difficultyIntermediate}
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
+          <Divider />
 
-        <Divider />
-
-        {/* Progress filter */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <CheckCircle color="action" sx={{ flexShrink: 0 }} />
-            <Typography
-              variant="body2"
-              sx={{ fontWeight: "600", fontFamily: "Inter, sans-serif" }}
+          {/* Progress filter */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 1,
+              }}
             >
-              <Translatable>{uiText.dashboard.progressLabel}</Translatable>
-            </Typography>
-          </Box>
+              <CheckCircle color="action" sx={{ flexShrink: 0 }} />
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "600", fontFamily: "Inter, sans-serif" }}
+              >
+                <Translatable>{uiText.dashboard.progressLabel}</Translatable>
+              </Typography>
+            </Box>
 
-          <ToggleButtonGroup
-            value={selectedProgress}
-            exclusive
-            onChange={(_, val) => {
-              if (Object.values(ProgressFilter).includes(val)) {
-                setSelectedProgress(val as ProgressFilter);
-              }
-            }}
-            orientation="vertical"
-            size="small"
-            aria-label={uiText.dashboard.progressAriaLabel}
-            sx={{
-              alignItems: "stretch",
-              "& .MuiToggleButtonGroup-grouped": {
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 2,
-              },
-              "& .MuiToggleButton-root": {
-                borderRadius: 2,
-                px: 2,
-                py: 0.7,
-                textTransform: "none",
-                fontWeight: "600",
-                fontFamily: "Inter, system-ui, sans-serif",
-                justifyContent: "flex-start",
-              },
-              "& .MuiToggleButton-root + .MuiToggleButton-root": {
-                mt: 1,
-              },
-            }}
-          >
-            <ToggleButton value={ProgressFilter.All}>
-              {uiText.dashboard.progressAll}
-            </ToggleButton>
-            <ToggleButton value={ProgressFilter.Unread}>
-              {uiText.dashboard.progressUnread}
-            </ToggleButton>
-            <ToggleButton value={ProgressFilter.Completed}>
-              {uiText.dashboard.progressCompleted}
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
-      </Paper>
+            <ToggleButtonGroup
+              value={selectedProgress}
+              exclusive
+              onChange={(_, val) => {
+                if (Object.values(ProgressFilter).includes(val)) {
+                  setSelectedProgress(val as ProgressFilter);
+                }
+              }}
+              orientation="vertical"
+              size="small"
+              aria-label={uiText.dashboard.progressAriaLabel}
+              sx={{
+                alignItems: "stretch",
+                "& .MuiToggleButtonGroup-grouped": {
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2,
+                },
+                "& .MuiToggleButton-root": {
+                  borderRadius: 2,
+                  px: 2,
+                  py: 0.7,
+                  textTransform: "none",
+                  fontWeight: "600",
+                  fontFamily: "Inter, system-ui, sans-serif",
+                  justifyContent: "flex-start",
+                },
+                "& .MuiToggleButton-root + .MuiToggleButton-root": {
+                  mt: 1,
+                },
+              }}
+            >
+              <ToggleButton value={ProgressFilter.All}>
+                {uiText.dashboard.progressAll}
+              </ToggleButton>
+              <ToggleButton value={ProgressFilter.Unread}>
+                {uiText.dashboard.progressUnread}
+              </ToggleButton>
+              <ToggleButton value={ProgressFilter.InProgress}>
+                {uiText.dashboard.progressInProgress}
+              </ToggleButton>
+              <ToggleButton value={ProgressFilter.Completed}>
+                {uiText.dashboard.progressCompleted}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+        </Paper>
+      </Collapse>
 
       {/* Story List */}
       {filteredStories.length > 0 ? (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
           {filteredStories.map((story) => {
             const diffStyle = getDifficultyStyle(story.difficulty);
-            const isCompleted = completedStoryIds.includes(story.id);
+            const totalSentences = story.sentences.length;
+            const completedSentences = Math.min(
+              storyProgressById[story.id] ?? 0,
+              totalSentences,
+            );
+            const isCompleted = completedSentences >= totalSentences;
+            const isInProgress = completedSentences > 0 && !isCompleted;
             return (
               <Card
                 key={story.id}
@@ -432,11 +473,22 @@ export function Dashboard({
                         }}
                       />
 
+                      <Chip
+                        label={<Translatable>{story.category}</Translatable>}
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                          fontWeight: "700",
+                          fontSize: "0.75rem",
+                          fontFamily: "Inter, system-ui, sans-serif",
+                        }}
+                      />
+
                       {isCompleted ? (
                         <Chip
                           icon={
                             <CheckCircle
-                              style={{ fontSize: 14, color: "#2e7d32" }}
+                              style={{ fontSize: 14, color: "#666" }}
                             />
                           }
                           label={
@@ -445,10 +497,29 @@ export function Dashboard({
                             </Translatable>
                           }
                           size="small"
-                          color="success"
                           variant="outlined"
                           sx={{
-                            fontWeight: "700",
+                            fontWeight: "600",
+                            fontSize: "0.75rem",
+                            fontFamily: "Inter, system-ui, sans-serif",
+                          }}
+                        />
+                      ) : isInProgress ? (
+                        <Chip
+                          icon={
+                            <AccessTime
+                              style={{ fontSize: 14, color: "#666" }}
+                            />
+                          }
+                          label={
+                            <Translatable>
+                              {uiText.dashboard.progressInProgress}
+                            </Translatable>
+                          }
+                          size="small"
+                          variant="outlined"
+                          sx={{
+                            fontWeight: "600",
                             fontSize: "0.75rem",
                             fontFamily: "Inter, system-ui, sans-serif",
                           }}
@@ -508,8 +579,8 @@ export function Dashboard({
                           label: uiLabel.wordCount(story.wordCount),
                         },
                         {
-                          icon: <MenuBook sx={{ fontSize: 16 }} />,
-                          label: uiLabel.vocabWordCount(story.glossary.length),
+                          icon: <CheckCircle sx={{ fontSize: 16 }} />,
+                          label: `${uiText.dashboard.storyProgressLabel} ${uiLabel.storyProgress(completedSentences, totalSentences)}`,
                         },
                       ].map(({ icon, label }) => (
                         <Box
@@ -543,32 +614,37 @@ export function Dashboard({
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    alignSelf: { xs: "flex-end", sm: "center" },
+                    alignSelf: { xs: "stretch", sm: "center" },
                     mt: { xs: 2, sm: 0 },
                     pl: { sm: 3 },
+                    width: { xs: "100%", sm: "auto" },
                   }}
                 >
                   <AppButton
-                    variant="text"
+                    variant="outlined"
+                    fullWidth
                     onClick={() => {
                       window.scrollTo({ top: 0, behavior: "smooth" });
-                      onSelectStory(story.id);
+                      onSelectStory(story.id, {
+                        startFromCover: isCompleted,
+                      });
                     }}
                     endIcon={<ChevronRight className="chevron-icon" />}
                     sx={{
+                      borderRadius: 2,
                       textTransform: "none",
                       fontWeight: "700",
                       fontFamily: "Inter, system-ui, sans-serif",
-                      color: "text.primary",
                       "&:hover": {
-                        bgcolor: "transparent",
-                        color: "primary.main",
+                        borderColor: "primary.main",
                       },
                     }}
                   >
                     {isCompleted
                       ? uiText.dashboard.ctaReadAgain
-                      : uiText.dashboard.ctaStartReading}
+                      : isInProgress
+                        ? uiText.dashboard.ctaContinueReading
+                        : uiText.dashboard.ctaStartReading}
                   </AppButton>
                 </Box>
               </Card>
@@ -608,8 +684,8 @@ export function Dashboard({
           <AppButton
             variant="outlined"
             onClick={() => {
-              setSearchQuery("");
               setSelectedDifficulty(DifficultyFilter.All);
+              setSelectedCategory("All");
               setSelectedProgress(ProgressFilter.All);
             }}
             sx={{

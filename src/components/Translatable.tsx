@@ -5,6 +5,7 @@ import uiTranslations from "../i18n/uiTranslations";
 
 interface TranslatableProps {
   children: React.ReactNode;
+  enableTooltips?: boolean;
 }
 
 interface PressWordTooltipProps {
@@ -55,8 +56,34 @@ function normalizeWord(word: string) {
   return word.toLowerCase().replace(/^[^a-zA-Z']+|[^a-zA-Z']+$/g, "");
 }
 
+function translateToken(token: string) {
+  const match = token.match(/^([^a-zA-Z']*)([a-zA-Z']+)([^a-zA-Z']*)$/);
+  if (!match) return token;
+
+  const [, prefix, word, suffix] = match;
+  const normalized = normalizeWord(word);
+  const translatedWord = uiTranslations[normalized];
+
+  if (!translatedWord) return token;
+
+  return `${prefix}${translatedWord}${suffix}`;
+}
+
+export function translatePlainText(text: string) {
+  return text
+    .split(/(\s+)/)
+    .map((token) => {
+      if (!token.trim()) return token;
+      return translateToken(token);
+    })
+    .join("");
+}
+
 // Wrap non-interactive UI text and show Polish translation for each pressed word.
-export function Translatable({ children }: TranslatableProps) {
+export function Translatable({
+  children,
+  enableTooltips = true,
+}: TranslatableProps) {
   if (typeof children !== "string") return <>{children}</>;
 
   const tokens = useMemo(() => children.split(/(\s+)/), [children]);
@@ -75,6 +102,10 @@ export function Translatable({ children }: TranslatableProps) {
         const translation = hasTranslation
           ? uiTranslations[normalized]
           : uiText.translatable.missingTranslation;
+
+        if (!enableTooltips) {
+          return <Fragment key={`plain-token-${index}`}>{token}</Fragment>;
+        }
 
         return (
           <PressWordTooltip

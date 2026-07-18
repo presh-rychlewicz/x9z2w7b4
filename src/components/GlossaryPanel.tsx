@@ -10,8 +10,14 @@ import {
 } from "@mui/material";
 import { useRef, useState } from "react";
 import { uiText } from "../constants/uiText";
-import type { GlossaryItem } from "../types/story";
 import Translatable from "./Translatable";
+
+interface GlossaryItem {
+  word: string;
+  partOfSpeech: string;
+  definition: string;
+  example: string;
+}
 
 interface GlossaryPanelProps {
   glossary: GlossaryItem[];

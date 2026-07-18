@@ -2,6 +2,7 @@
   "id": "lion-mouse",
   "title": "The Lion and the Mouse",
   "difficulty": "Beginner",
+  "category": "Kindness",
   "synopsis": "A tiny mouse promises to help a mighty lion in exchange for his life. An inspiring tale of kindness.",
   "sentences": [
     "A mighty Lion lay sleeping in the jungle.",
@@ -20,37 +21,5 @@
     "\"You laughed when I promised to help,\" said the Mouse.",
     "\"Now you see that even a tiny mouse can help a great lion.\"",
     "Kindness is never wasted."
-  ],
-  "glossary": [
-    {
-      "word": "mighty",
-      "partOfSpeech": "adjective",
-      "definition": "Possessing great power, strength, or size.",
-      "example": "A mighty wind blew the roof off the small house."
-    },
-    {
-      "word": "disturbed",
-      "partOfSpeech": "verb",
-      "definition": "Interrupted someone's quiet, rest, or attention.",
-      "example": "The loud music disturbed my study session."
-    },
-    {
-      "word": "spare",
-      "partOfSpeech": "verb",
-      "definition": "To save someone from being hurt, killed, or punished.",
-      "example": "He begged the judge to spare him from going to prison."
-    },
-    {
-      "word": "generous",
-      "partOfSpeech": "adjective",
-      "definition": "Willing to give money, help, or kindness freely.",
-      "example": "The generous woman donated food to the poor."
-    },
-    {
-      "word": "gnaw",
-      "partOfSpeech": "verb",
-      "definition": "To bite or chew on something repeatedly.",
-      "example": "The puppy likes to gnaw on its chew toy."
-    }
   ]
 }

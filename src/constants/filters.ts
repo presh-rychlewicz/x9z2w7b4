@@ -10,6 +10,7 @@ export type DifficultyFilter =
 export const ProgressFilter = {
   All: "All",
   Unread: "Unread",
+  InProgress: "InProgress",
   Completed: "Completed",
 } as const;
 

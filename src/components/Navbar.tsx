@@ -2,6 +2,7 @@ import {
   Brightness4,
   Brightness7,
   ConstructionRounded,
+  MenuBook,
   School,
 } from "@mui/icons-material";
 import {
@@ -18,6 +19,7 @@ import Translatable from "./Translatable";
 interface NavbarProps {
   themeMode: "light" | "dark";
   onToggleTheme: () => void;
+  onOpenMainList: () => void;
   showDevButton: boolean;
   onOpenDevPage: () => void;
 }
@@ -25,9 +27,12 @@ interface NavbarProps {
 export function Navbar({
   themeMode,
   onToggleTheme,
+  onOpenMainList,
   showDevButton,
   onOpenDevPage,
 }: NavbarProps) {
+  const storiesButtonLabel = uiText.navbar.allStoriesButton;
+
   return (
     <AppBar
       position="sticky"
@@ -67,6 +72,17 @@ export function Navbar({
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
+          <Tooltip title={storiesButtonLabel}>
+            <IconButton
+              size="small"
+              color="inherit"
+              aria-label={storiesButtonLabel}
+              onClick={onOpenMainList}
+            >
+              <MenuBook fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
           {showDevButton && (
             <Tooltip title={uiText.navbar.devButton}>
               <IconButton

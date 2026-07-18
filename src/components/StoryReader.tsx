@@ -1,12 +1,11 @@
 import {
   Add,
   ArrowBack,
-  CheckCircle,
-  FormatSize,
   NavigateBefore,
   NavigateNext,
-  RadioButtonUnchecked,
   Remove,
+  Visibility,
+  VisibilityOff,
 } from "@mui/icons-material";
 import {
   Box,
@@ -16,36 +15,72 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { uiLabel, uiText } from "../constants/uiText";
 import type { Story } from "../types/story";
 import AppButton from "./AppButton";
-import Translatable from "./Translatable";
+import CategoryPill from "./CategoryPill";
+import LevelPill from "./LevelPill";
+import Translatable, { translatePlainText } from "./Translatable";
 
 interface StoryReaderProps {
   story: Story;
   onBack: () => void;
-  isCompleted: boolean;
-  onToggleComplete: () => void;
+  initialCompletedSentences: number;
+  onProgressChange: (completedSentences: number) => void;
+  startFromCover?: boolean;
+  onCoverNext?: () => void;
+  showStoryTranslations: boolean;
+  onToggleStoryTranslations: () => void;
 }
 
 export function StoryReader({
   story,
   onBack,
-  isCompleted,
-  onToggleComplete,
+  initialCompletedSentences,
+  onProgressChange,
+  startFromCover = false,
+  onCoverNext,
+  showStoryTranslations,
+  onToggleStoryTranslations,
 }: StoryReaderProps) {
   const MIN_FONT_SIZE = 16;
   const MAX_FONT_SIZE = 28;
   const FONT_SIZE_STEP = 2;
   const [fontSize, setFontSize] = useState<number>(20);
-  const [currentSentenceIndex, setCurrentSentenceIndex] = useState(-1);
+  const [currentSentenceIndex, setCurrentSentenceIndex] = useState(() => {
+    if (startFromCover) return -1;
+
+    const initial = Math.max(
+      0,
+      Math.min(initialCompletedSentences, story.sentences.length),
+    );
+    return initial - 1;
+  });
+  const onProgressChangeRef = useRef(onProgressChange);
+  const lastReportedProgressRef = useRef<number | null>(null);
 
   const sentences = useMemo(() => story.sentences, [story.sentences]);
 
   useEffect(() => {
-    setCurrentSentenceIndex(-1);
-  }, [story.id]);
+    onProgressChangeRef.current = onProgressChange;
+  }, [onProgressChange]);
+
+  useEffect(() => {
+    if (startFromCover) {
+      setCurrentSentenceIndex((prev) => (prev === -1 ? prev : -1));
+      return;
+    }
+
+    const maxCompletedSentences = Math.max(
+      0,
+      Math.min(initialCompletedSentences, sentences.length),
+    );
+    const nextSentenceIndex = maxCompletedSentences - 1;
+    setCurrentSentenceIndex((prev) =>
+      prev === nextSentenceIndex ? prev : nextSentenceIndex,
+    );
+  }, [story.id, sentences.length, startFromCover, initialCompletedSentences]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -59,10 +94,27 @@ export function StoryReader({
   const completedSentences = Math.max(currentSentenceIndex + 1, 0);
   const activeSentence =
     currentSentenceIndex >= 0 ? (sentences[currentSentenceIndex] ?? "") : "";
+  const activeSentenceTranslation = useMemo(() => {
+    if (!activeSentence) return "";
+    return translatePlainText(activeSentence);
+  }, [activeSentence]);
   const progressPercent = (completedSentences / totalSentences) * 100;
   const isIntroStep = currentSentenceIndex < 0;
   const isFirstStep = currentSentenceIndex <= -1;
   const isLastSentence = currentSentenceIndex >= totalSentences - 1;
+
+  useEffect(() => {
+    if (startFromCover && isIntroStep) {
+      return;
+    }
+
+    if (lastReportedProgressRef.current === completedSentences) {
+      return;
+    }
+
+    lastReportedProgressRef.current = completedSentences;
+    onProgressChangeRef.current(completedSentences);
+  }, [completedSentences, startFromCover, isIntroStep]);
 
   return (
     <Box
@@ -99,60 +151,94 @@ export function StoryReader({
           {uiText.storyReader.backToStories}
         </AppButton>
 
-        {/* Reading Settings */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 1,
-            alignItems: "center",
-            width: "auto",
-            flexShrink: 0,
-          }}
-        >
-          {/* Font Size Selectors */}
+        {!isIntroStep ? (
+          /* Reading Settings */
           <Box
             sx={{
               display: "flex",
               flexDirection: "row",
               gap: 1,
               alignItems: "center",
+              width: "auto",
+              flexShrink: 0,
             }}
           >
-            <FormatSize color="action" />
-            <AppButton
-              variant="outlined"
-              color="primary"
-              size="small"
-              aria-label={uiText.storyReader.decreaseFontSizeAriaLabel}
-              onClick={() =>
-                setFontSize((prev) =>
-                  Math.max(MIN_FONT_SIZE, prev - FONT_SIZE_STEP),
-                )
-              }
-              disabled={fontSize <= MIN_FONT_SIZE}
-              sx={{ minWidth: 38, px: 0.5, borderRadius: 2, fontWeight: "700" }}
+            {/* Font Size Selectors */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 1,
+                alignItems: "center",
+              }}
             >
-              <Remove fontSize="small" />
-            </AppButton>
+              <AppButton
+                variant="outlined"
+                color="primary"
+                size="small"
+                aria-label={uiText.storyReader.decreaseFontSizeAriaLabel}
+                onClick={() =>
+                  setFontSize((prev) =>
+                    Math.max(MIN_FONT_SIZE, prev - FONT_SIZE_STEP),
+                  )
+                }
+                disabled={fontSize <= MIN_FONT_SIZE}
+                sx={{
+                  minWidth: 38,
+                  px: 0.5,
+                  borderRadius: 2,
+                  fontWeight: "700",
+                }}
+              >
+                <Remove fontSize="small" />
+              </AppButton>
 
-            <AppButton
-              variant="outlined"
-              color="primary"
-              size="small"
-              aria-label={uiText.storyReader.increaseFontSizeAriaLabel}
-              onClick={() =>
-                setFontSize((prev) =>
-                  Math.min(MAX_FONT_SIZE, prev + FONT_SIZE_STEP),
-                )
-              }
-              disabled={fontSize >= MAX_FONT_SIZE}
-              sx={{ minWidth: 38, px: 0.5, borderRadius: 2, fontWeight: "700" }}
-            >
-              <Add fontSize="small" />
-            </AppButton>
+              <AppButton
+                variant="outlined"
+                color="primary"
+                size="small"
+                aria-label={uiText.storyReader.increaseFontSizeAriaLabel}
+                onClick={() =>
+                  setFontSize((prev) =>
+                    Math.min(MAX_FONT_SIZE, prev + FONT_SIZE_STEP),
+                  )
+                }
+                disabled={fontSize >= MAX_FONT_SIZE}
+                sx={{
+                  minWidth: 38,
+                  px: 0.5,
+                  borderRadius: 2,
+                  fontWeight: "700",
+                }}
+              >
+                <Add fontSize="small" />
+              </AppButton>
+
+              <AppButton
+                variant={showStoryTranslations ? "contained" : "outlined"}
+                color="primary"
+                size="small"
+                aria-label={
+                  showStoryTranslations
+                    ? uiText.storyReader.hideTranslationsAriaLabel
+                    : uiText.storyReader.showTranslationsAriaLabel
+                }
+                onClick={onToggleStoryTranslations}
+                sx={{
+                  minWidth: 38,
+                  px: 0.5,
+                  borderRadius: 2,
+                }}
+              >
+                {showStoryTranslations ? (
+                  <VisibilityOff fontSize="small" />
+                ) : (
+                  <Visibility fontSize="small" />
+                )}
+              </AppButton>
+            </Box>
           </Box>
-        </Box>
+        ) : null}
       </Box>
 
       {/* Layout Grid */}
@@ -187,8 +273,8 @@ export function StoryReader({
               fontWeight: 600,
             }}
           >
-            {uiText.storyReader.sentenceProgressLabel} {completedSentences}{" "}
-            {uiText.storyReader.sentenceProgressOf} {totalSentences}
+            {uiText.dashboard.storyProgressLabel}{" "}
+            {uiLabel.storyProgress(completedSentences, totalSentences)}
           </Typography>
           <LinearProgress
             variant="determinate"
@@ -202,6 +288,7 @@ export function StoryReader({
             sx={{
               flex: 1,
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               px: { xs: 0.5, md: 2 },
@@ -229,41 +316,65 @@ export function StoryReader({
                   <Translatable>{story.title}</Translatable>
                 </Typography>
 
-                <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
-                  <Chip
-                    label={<Translatable>{story.difficulty}</Translatable>}
-                    color={
-                      story.difficulty === "Beginner" ? "success" : "warning"
-                    }
-                    size="small"
-                  />
-                  <Chip
-                    label={
-                      <Translatable>
-                        {uiLabel.minRead(story.readingTimeMin)}
-                      </Translatable>
-                    }
-                    variant="outlined"
-                    size="small"
-                  />
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
+                    <LevelPill difficulty={story.difficulty} />
+                    <Chip
+                      label={
+                        <Translatable>
+                          {uiLabel.minRead(story.readingTimeMin)}
+                        </Translatable>
+                      }
+                      variant="outlined"
+                      size="small"
+                    />
+                  </Box>
+                  <CategoryPill category={story.category} />
                 </Box>
               </Box>
             ) : (
-              <Typography
-                component="p"
-                sx={{
-                  fontSize: `${fontSize}px`,
-                  lineHeight: 1.9,
-                  color: "text.primary",
-                  textAlign: "center",
-                  fontWeight: 500,
-                  maxWidth: 900,
-                }}
-              >
-                {activeSentence ? (
-                  <Translatable>{activeSentence}</Translatable>
+              <>
+                <Typography
+                  component="p"
+                  sx={{
+                    fontSize: `${fontSize}px`,
+                    lineHeight: 1.9,
+                    color: "text.primary",
+                    textAlign: "center",
+                    fontWeight: 500,
+                    maxWidth: 900,
+                  }}
+                >
+                  {activeSentence ? (
+                    <Translatable enableTooltips={!showStoryTranslations}>
+                      {activeSentence}
+                    </Translatable>
+                  ) : null}
+                </Typography>
+
+                {showStoryTranslations && activeSentence ? (
+                  <Typography
+                    component="p"
+                    color="text.secondary"
+                    sx={{
+                      mt: 2,
+                      fontSize: `${Math.max(fontSize - 4, 14)}px`,
+                      lineHeight: 1.7,
+                      textAlign: "center",
+                      maxWidth: 900,
+                    }}
+                  >
+                    {activeSentenceTranslation}
+                  </Typography>
                 ) : null}
-              </Typography>
+              </>
             )}
           </Box>
 
@@ -296,44 +407,28 @@ export function StoryReader({
                 {uiText.storyReader.previousSentence}
               </AppButton>
 
-              {isLastSentence ? (
-                <AppButton
-                  variant="contained"
-                  color={isCompleted ? "success" : "primary"}
-                  startIcon={
-                    isCompleted ? <CheckCircle /> : <RadioButtonUnchecked />
+              <AppButton
+                variant="contained"
+                endIcon={<NavigateNext />}
+                onClick={() => {
+                  if (isIntroStep) {
+                    onCoverNext?.();
                   }
-                  onClick={onToggleComplete}
-                  sx={{
-                    textTransform: "none",
-                    fontWeight: 600,
-                    flex: 1,
-                    minWidth: 0,
-                  }}
-                >
-                  {isCompleted
-                    ? uiText.storyReader.markAsUnread
-                    : uiText.storyReader.markAsCompleted}
-                </AppButton>
-              ) : (
-                <AppButton
-                  variant="contained"
-                  endIcon={<NavigateNext />}
-                  onClick={() =>
-                    setCurrentSentenceIndex((prev) =>
-                      Math.min(prev + 1, totalSentences - 1),
-                    )
-                  }
-                  sx={{
-                    textTransform: "none",
-                    fontWeight: 600,
-                    flex: 1,
-                    minWidth: 0,
-                  }}
-                >
-                  {uiText.storyReader.nextSentence}
-                </AppButton>
-              )}
+
+                  setCurrentSentenceIndex((prev) =>
+                    Math.min(prev + 1, totalSentences - 1),
+                  );
+                }}
+                disabled={isLastSentence}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              >
+                {uiText.storyReader.nextSentence}
+              </AppButton>
             </Box>
           </Box>
         </Paper>
