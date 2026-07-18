@@ -1,5 +1,5 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { uiText } from "../constants/uiText";
 import type { Story } from "../types/story";
 import AppButton from "./AppButton";
@@ -43,8 +43,12 @@ export function HomePage({
     });
   }, [stories, storyProgressById]);
 
+  const [suggestedStoryIndex, setSuggestedStoryIndex] = useState(0);
+
   const suggestedStory =
-    suggestedStories.length > 0 ? suggestedStories[0] : null;
+    suggestedStories.length > 0
+      ? suggestedStories[suggestedStoryIndex % suggestedStories.length]
+      : null;
   const activeInProgressStory =
     inProgressStories.length > 0 ? inProgressStories[0] : null;
 
@@ -90,6 +94,20 @@ export function HomePage({
                 sx={{ textTransform: "none", fontWeight: "700" }}
               >
                 {uiText.dashboard.ctaStartReading}
+              </AppButton>
+
+              <AppButton
+                variant="outlined"
+                onClick={() =>
+                  setSuggestedStoryIndex((prev) =>
+                    suggestedStories.length === 0
+                      ? 0
+                      : (prev + 1) % suggestedStories.length,
+                  )
+                }
+                sx={{ textTransform: "none", fontWeight: "700" }}
+              >
+                {uiText.storyReader.nextSentence}
               </AppButton>
             </Box>
           </Box>
