@@ -206,26 +206,25 @@ export function Dashboard({
               aria-label={uiText.dashboard.difficultyAriaLabel}
               sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-              {[
-                DifficultyFilter.All,
-                DifficultyFilter.Beginner,
-              ].map((value) => (
-                <AppButton
-                  key={value}
-                  variant={
-                    selectedDifficulty === value ? "contained" : "outlined"
-                  }
-                  size="small"
-                  alignLabelLeft
-                  aria-pressed={selectedDifficulty === value}
-                  onClick={() => setSelectedDifficulty(value)}
-                  sx={filterButtonSx}
-                >
-                  {value === DifficultyFilter.All
-                    ? uiText.dashboard.difficultyAll
-                    : uiText.dashboard.difficultyBeginner}
-                </AppButton>
-              ))}
+              {[DifficultyFilter.All, DifficultyFilter.Beginner].map(
+                (value) => (
+                  <AppButton
+                    key={value}
+                    variant={
+                      selectedDifficulty === value ? "contained" : "outlined"
+                    }
+                    size="small"
+                    alignLabelLeft
+                    aria-pressed={selectedDifficulty === value}
+                    onClick={() => setSelectedDifficulty(value)}
+                    sx={filterButtonSx}
+                  >
+                    {value === DifficultyFilter.All
+                      ? uiText.dashboard.difficultyAll
+                      : uiText.dashboard.difficultyBeginner}
+                  </AppButton>
+                ),
+              )}
             </Box>
           </Box>
 
