@@ -16,6 +16,24 @@ const darkTheme = createTheme({
   typography: {
     fontFamily: 'Inter, system-ui, sans-serif',
   },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        html: {
+          maxWidth: '100%',
+          overflowX: 'hidden',
+        },
+        body: {
+          maxWidth: '100%',
+          overflowX: 'hidden',
+        },
+        '#root': {
+          maxWidth: '100%',
+          overflowX: 'hidden',
+        },
+      },
+    },
+  },
 })
 
 function App() {
