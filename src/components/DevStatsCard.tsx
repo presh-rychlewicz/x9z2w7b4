@@ -51,7 +51,7 @@ export function DevStatsCard({
             color={row.highlight ? "warning.main" : undefined}
             sx={{
               fontFamily: "Inter, system-ui, sans-serif",
-              fontWeight: row.highlight ? 600 : 400,
+              fontWeight: 400,
             }}
           >
             {row.label}: {row.value}

@@ -121,6 +121,22 @@ export function DevPage({ onBack }: DevPageProps) {
       : uiText.devPage.noMissingWords;
   }, []);
 
+  const missingUiWordsCopyText = useMemo(() => {
+    if (missingUiWordsCsv === uiText.devPage.noMissingWords) {
+      return missingUiWordsCsv;
+    }
+
+    return `${uiText.devPage.copyMissingWordsPrompt} ${missingUiWordsCsv}`;
+  }, [missingUiWordsCsv]);
+
+  const missingStoryWordsCopyText = useMemo(() => {
+    if (missingStoryWordsCsv === uiText.devPage.noMissingWords) {
+      return missingStoryWordsCsv;
+    }
+
+    return `${uiText.devPage.copyMissingWordsPrompt} ${missingStoryWordsCsv}`;
+  }, [missingStoryWordsCsv]);
+
   return (
     <Box
       sx={{
@@ -147,11 +163,11 @@ export function DevPage({ onBack }: DevPageProps) {
           title={uiText.devPage.uiSectionTitle}
           rows={[
             {
-              label: uiText.devPage.uiStringsLabel,
+              label: uiText.devPage.stringsLabel,
               value: uiStringStats.totalUiStrings,
             },
             {
-              label: uiText.devPage.uiMissingTranslationsLabel,
+              label: uiText.devPage.missingTranslationsLabel,
               value: uiStringStats.missingTranslationsCount,
               highlight: true,
             },
@@ -163,7 +179,7 @@ export function DevPage({ onBack }: DevPageProps) {
           }
           onCopyFooter={
             uiStringStats.missingTranslationsCount > 0
-              ? () => void copyTextToClipboard(missingUiWordsCsv)
+              ? () => void copyTextToClipboard(missingUiWordsCopyText)
               : undefined
           }
           copyFooterLabel={
@@ -177,11 +193,11 @@ export function DevPage({ onBack }: DevPageProps) {
           title={uiText.devPage.storiesSectionTitle}
           rows={[
             {
-              label: uiText.devPage.storyStringsLabel,
+              label: uiText.devPage.stringsLabel,
               value: storyStringStats.totalStoryStrings,
             },
             {
-              label: uiText.devPage.storyMissingTranslationsLabel,
+              label: uiText.devPage.missingTranslationsLabel,
               value: storyStringStats.missingTranslationsCount,
               highlight: true,
             },
@@ -193,7 +209,7 @@ export function DevPage({ onBack }: DevPageProps) {
           }
           onCopyFooter={
             storyStringStats.missingTranslationsCount > 0
-              ? () => void copyTextToClipboard(missingStoryWordsCsv)
+              ? () => void copyTextToClipboard(missingStoryWordsCopyText)
               : undefined
           }
           copyFooterLabel={
