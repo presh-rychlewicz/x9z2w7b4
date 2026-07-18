@@ -49,7 +49,7 @@ export function Dashboard({
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<DifficultyFilter>(DifficultyFilter.All);
   const [selectedProgress, setSelectedProgress] = useState<ProgressFilter>(
-    ProgressFilter.All,
+    ProgressFilter.Unread,
   );
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [areFiltersCollapsed, setAreFiltersCollapsed] = useState(true);
