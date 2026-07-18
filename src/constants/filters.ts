@@ -1,7 +1,6 @@
 export const DifficultyFilter = {
   All: "All",
   Beginner: "Beginner",
-  Intermediate: "Intermediate",
 } as const;
 
 export type DifficultyFilter =

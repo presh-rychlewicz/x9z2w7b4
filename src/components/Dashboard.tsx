@@ -206,14 +206,15 @@ export function Dashboard({
               aria-label={uiText.dashboard.difficultyAriaLabel}
               sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-              {[ 
+              {[
                 DifficultyFilter.All,
                 DifficultyFilter.Beginner,
-                DifficultyFilter.Intermediate,
               ].map((value) => (
                 <AppButton
                   key={value}
-                  variant={selectedDifficulty === value ? "contained" : "outlined"}
+                  variant={
+                    selectedDifficulty === value ? "contained" : "outlined"
+                  }
                   size="small"
                   alignLabelLeft
                   aria-pressed={selectedDifficulty === value}
@@ -222,9 +223,7 @@ export function Dashboard({
                 >
                   {value === DifficultyFilter.All
                     ? uiText.dashboard.difficultyAll
-                    : value === DifficultyFilter.Beginner
-                      ? uiText.dashboard.difficultyBeginner
-                      : uiText.dashboard.difficultyIntermediate}
+                    : uiText.dashboard.difficultyBeginner}
                 </AppButton>
               ))}
             </Box>
@@ -259,7 +258,9 @@ export function Dashboard({
               {categoryOptions.map((category) => (
                 <AppButton
                   key={category}
-                  variant={selectedCategory === category ? "contained" : "outlined"}
+                  variant={
+                    selectedCategory === category ? "contained" : "outlined"
+                  }
                   size="small"
                   alignLabelLeft
                   aria-pressed={selectedCategory === category}
@@ -306,7 +307,9 @@ export function Dashboard({
               ].map((value) => (
                 <AppButton
                   key={value}
-                  variant={selectedProgress === value ? "contained" : "outlined"}
+                  variant={
+                    selectedProgress === value ? "contained" : "outlined"
+                  }
                   size="small"
                   alignLabelLeft
                   aria-pressed={selectedProgress === value}
