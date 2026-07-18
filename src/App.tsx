@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from "react";
 import { DevPage } from "./components/DevPage";
 import { HomePage } from "./components/HomePage";
 import { Navbar } from "./components/Navbar";
-import { StoryList } from "./components/StoryList";
 import { StoryReader } from "./components/StoryReader";
 import {
   STORY_PROGRESS_KEY,
@@ -15,7 +14,6 @@ import { createAppTheme } from "./theme/appTheme";
 
 const AppPage = {
   Home: "home",
-  Main: "main",
   Dev: "dev",
 } as const;
 
@@ -93,6 +91,12 @@ function App() {
     setActivePage(storyReturnPage);
   }, [storyReturnPage]);
 
+  const handleCloseStoryToHome = useCallback(() => {
+    setSelectedStoryId(null);
+    setStartStoryFromCover(false);
+    setActivePage(AppPage.Home);
+  }, []);
+
   const handleToggleTheme = () => {
     setThemeMode((prev) => {
       const next = prev === "light" ? "dark" : "light";
@@ -127,6 +131,17 @@ function App() {
     return stories.find((s) => s.id === selectedStoryId) || null;
   }, [selectedStoryId]);
 
+  const completedStoriesCount = useMemo(() => {
+    return stories.filter((story) => {
+      const completedSentences = Math.min(
+        storyProgressById[story.id] ?? 0,
+        story.sentences.length,
+      );
+
+      return completedSentences >= story.sentences.length;
+    }).length;
+  }, [storyProgressById]);
+
   const handleActiveStoryProgressChange = useCallback(
     (completedSentences: number) => {
       if (!activeStory) return;
@@ -156,6 +171,7 @@ function App() {
         <StoryReader
           story={activeStory}
           onBack={handleCloseStory}
+          onGoHome={handleCloseStoryToHome}
           initialCompletedSentences={storyProgressById[activeStory.id] ?? 0}
           onProgressChange={handleActiveStoryProgressChange}
           startFromCover={startStoryFromCover}
@@ -170,22 +186,12 @@ function App() {
       case AppPage.Dev:
         return <DevPage onBack={() => setActivePage(AppPage.Home)} />;
       case AppPage.Home:
+      default:
         return (
           <HomePage
             stories={stories}
             storyProgressById={storyProgressById}
             onSelectStory={handleOpenStory}
-            onOpenMainList={() => setActivePage(AppPage.Main)}
-          />
-        );
-      case AppPage.Main:
-      default:
-        return (
-          <StoryList
-            stories={stories}
-            onSelectStory={handleOpenStory}
-            storyProgressById={storyProgressById}
-            onBackToHome={() => setActivePage(AppPage.Home)}
           />
         );
     }
@@ -198,10 +204,7 @@ function App() {
       <Navbar
         themeMode={themeMode}
         onToggleTheme={handleToggleTheme}
-        onOpenMainList={() => {
-          setSelectedStoryId(null);
-          setActivePage(AppPage.Main);
-        }}
+        completedStoriesCount={completedStoriesCount}
         showDevButton={isDevelopment}
         onOpenDevPage={() => {
           setSelectedStoryId(null);

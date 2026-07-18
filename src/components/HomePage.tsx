@@ -10,14 +10,12 @@ interface HomePageProps {
   stories: Story[];
   storyProgressById: Record<string, number>;
   onSelectStory: (id: string) => void;
-  onOpenMainList: () => void;
 }
 
 export function HomePage({
   stories,
   storyProgressById,
   onSelectStory,
-  onOpenMainList,
 }: HomePageProps) {
   const inProgressStories = useMemo(() => {
     return stories.filter((story) => {
@@ -51,6 +49,8 @@ export function HomePage({
     suggestedStories.length > 0
       ? suggestedStories[suggestedStoryIndex % suggestedStories.length]
       : null;
+  const activeInProgressStory =
+    inProgressStories.length > 0 ? inProgressStories[0] : null;
   const isLastSuggestedStory =
     suggestedStories.length > 0 &&
     suggestedStoryIndex % suggestedStories.length ===
@@ -102,18 +102,18 @@ export function HomePage({
 
               <AppButton
                 variant="outlined"
-                onClick={() =>
-                  setSuggestedStoryIndex((prev) =>
-                    suggestedStories.length === 0
-                      ? 0
-                      : (prev + 1) % suggestedStories.length,
-                  )
-                }
-                disabled={suggestedStories.length < 2}
+                onClick={() => {
+                  if (suggestedStories.length < 2 || isLastSuggestedStory) {
+                    setSuggestedStoryIndex(0);
+                    return;
+                  }
+
+                  setSuggestedStoryIndex((prev) => prev + 1);
+                }}
                 sx={{ textTransform: "none", fontWeight: "700" }}
               >
-                {isLastSuggestedStory
-                  ? uiText.inProgressPage.tryOneMoreTime
+                {suggestedStories.length < 2 || isLastSuggestedStory
+                  ? uiText.inProgressPage.resetSuggestions
                   : uiText.storyReader.nextSentence}
               </AppButton>
             </Box>
@@ -150,39 +150,54 @@ export function HomePage({
               </Translatable>
             </Typography>
 
-            <AppButton
-              fullWidth
-              variant="outlined"
-              onClick={onOpenMainList}
-              sx={{ textTransform: "none", fontWeight: "700" }}
-            >
-              {uiText.navbar.allStoriesButton}
-            </AppButton>
           </Paper>
         )
-      ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-          {inProgressStories.map((story) => {
-            const totalSentences = story.sentences.length;
-            const completedSentences = Math.min(
-              storyProgressById[story.id] ?? 0,
-              totalSentences,
-            );
+      ) : activeInProgressStory ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "calc(100vh - 180px)",
+          }}
+        >
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "flex-start",
+            }}
+          >
+            <StoryCard
+              story={activeInProgressStory}
+              isCompleted={false}
+              completedSentences={Math.min(
+                storyProgressById[activeInProgressStory.id] ?? 0,
+                activeInProgressStory.sentences.length,
+              )}
+              onSelectStory={onSelectStory}
+              ctaMode="continue"
+              scrollToTopOnSelect={false}
+              showActionButton={false}
+            />
+          </Box>
 
-            return (
-              <StoryCard
-                key={story.id}
-                story={story}
-                isCompleted={false}
-                completedSentences={completedSentences}
-                onSelectStory={onSelectStory}
-                ctaMode="continue"
-                scrollToTopOnSelect={false}
-              />
-            );
-          })}
+          <Box
+            sx={{
+              mt: 2.5,
+              display: "flex",
+            }}
+          >
+            <AppButton
+              variant="contained"
+              fullWidth
+              onClick={() => onSelectStory(activeInProgressStory.id)}
+              sx={{ textTransform: "none", fontWeight: "700" }}
+            >
+              {uiText.inProgressPage.continueReading}
+            </AppButton>
+          </Box>
         </Box>
-      )}
+      ) : null}
     </Box>
   );
 }

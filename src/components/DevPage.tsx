@@ -131,9 +131,15 @@ export function DevPage({ onBack }: DevPageProps) {
         variant="outlined"
         startIcon={<ArrowBack />}
         onClick={onBack}
-        sx={{ mb: 3, textTransform: "none", fontWeight: "600" }}
+        sx={{
+          mb: 3,
+          borderRadius: 2,
+          textTransform: "none",
+          fontFamily: "Inter, system-ui, sans-serif",
+          fontWeight: "600",
+        }}
       >
-        {uiText.devPage.backToApp}
+        {uiText.storyReader.backToStories}
       </AppButton>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>

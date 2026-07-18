@@ -26,6 +26,7 @@ import Translatable, { translatePlainText } from "./Translatable";
 interface StoryReaderProps {
   story: Story;
   onBack: () => void;
+  onGoHome: () => void;
   initialCompletedSentences: number;
   onProgressChange: (completedSentences: number) => void;
   startFromCover?: boolean;
@@ -37,6 +38,7 @@ interface StoryReaderProps {
 export function StoryReader({
   story,
   onBack,
+  onGoHome,
   initialCompletedSentences,
   onProgressChange,
   startFromCover = false,
@@ -175,7 +177,6 @@ export function StoryReader({
               <AppButton
                 variant="outlined"
                 color="primary"
-                size="small"
                 aria-label={uiText.storyReader.decreaseFontSizeAriaLabel}
                 onClick={() =>
                   setFontSize((prev) =>
@@ -184,8 +185,8 @@ export function StoryReader({
                 }
                 disabled={fontSize <= MIN_FONT_SIZE}
                 sx={{
-                  minWidth: 38,
-                  px: 0.5,
+                  minHeight: 44,
+                  minWidth: 44,
                   borderRadius: 2,
                   fontWeight: "700",
                 }}
@@ -196,7 +197,6 @@ export function StoryReader({
               <AppButton
                 variant="outlined"
                 color="primary"
-                size="small"
                 aria-label={uiText.storyReader.increaseFontSizeAriaLabel}
                 onClick={() =>
                   setFontSize((prev) =>
@@ -205,8 +205,8 @@ export function StoryReader({
                 }
                 disabled={fontSize >= MAX_FONT_SIZE}
                 sx={{
-                  minWidth: 38,
-                  px: 0.5,
+                  minHeight: 44,
+                  minWidth: 44,
                   borderRadius: 2,
                   fontWeight: "700",
                 }}
@@ -217,7 +217,6 @@ export function StoryReader({
               <AppButton
                 variant={showStoryTranslations ? "contained" : "outlined"}
                 color="primary"
-                size="small"
                 aria-label={
                   showStoryTranslations
                     ? uiText.storyReader.hideTranslationsAriaLabel
@@ -225,8 +224,8 @@ export function StoryReader({
                 }
                 onClick={onToggleStoryTranslations}
                 sx={{
-                  minWidth: 38,
-                  px: 0.5,
+                  minHeight: 44,
+                  minWidth: 44,
                   borderRadius: 2,
                 }}
               >
@@ -412,6 +411,11 @@ export function StoryReader({
                 variant="contained"
                 endIcon={<NavigateNext />}
                 onClick={() => {
+                  if (isLastSentence) {
+                    onGoHome();
+                    return;
+                  }
+
                   if (isIntroStep) {
                     onCoverNext?.();
                   }
@@ -420,7 +424,6 @@ export function StoryReader({
                     Math.min(prev + 1, totalSentences - 1),
                   );
                 }}
-                disabled={isLastSentence}
                 sx={{
                   textTransform: "none",
                   fontWeight: 600,
@@ -428,7 +431,9 @@ export function StoryReader({
                   minWidth: 0,
                 }}
               >
-                {uiText.storyReader.nextSentence}
+                {isLastSentence
+                  ? uiText.storyReader.endStory
+                  : uiText.storyReader.nextSentence}
               </AppButton>
             </Box>
           </Box>

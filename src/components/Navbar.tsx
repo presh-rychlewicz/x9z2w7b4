@@ -1,8 +1,8 @@
 import {
   Brightness4,
   Brightness7,
+  Check,
   ConstructionRounded,
-  MenuBook,
   School,
 } from "@mui/icons-material";
 import {
@@ -19,7 +19,7 @@ import Translatable from "./Translatable";
 interface NavbarProps {
   themeMode: "light" | "dark";
   onToggleTheme: () => void;
-  onOpenMainList: () => void;
+  completedStoriesCount: number;
   showDevButton: boolean;
   onOpenDevPage: () => void;
 }
@@ -27,12 +27,10 @@ interface NavbarProps {
 export function Navbar({
   themeMode,
   onToggleTheme,
-  onOpenMainList,
+  completedStoriesCount,
   showDevButton,
   onOpenDevPage,
 }: NavbarProps) {
-  const storiesButtonLabel = uiText.navbar.allStoriesButton;
-
   return (
     <AppBar
       position="sticky"
@@ -72,16 +70,32 @@ export function Navbar({
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
-          <Tooltip title={storiesButtonLabel}>
-            <IconButton
-              size="small"
-              color="inherit"
-              aria-label={storiesButtonLabel}
-              onClick={onOpenMainList}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 0.5,
+              mr: 0.5,
+            }}
+          >
+            <Check
+              fontSize="small"
+              sx={{
+                color: "text.secondary",
+              }}
+            />
+            <Typography
+              variant="body2"
+              sx={{
+                fontFamily: "Inter, system-ui, sans-serif",
+                fontWeight: "700",
+                lineHeight: 1.1,
+              }}
             >
-              <MenuBook fontSize="small" />
-            </IconButton>
-          </Tooltip>
+              {completedStoriesCount}
+            </Typography>
+          </Box>
 
           {showDevButton && (
             <Tooltip title={uiText.navbar.devButton}>

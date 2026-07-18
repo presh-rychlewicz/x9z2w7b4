@@ -8,6 +8,7 @@ export const uiText = {
     tagline: "• Kids' Stories for English Learners",
     homeButton: "Home",
     allStoriesButton: "All Stories",
+    completedLabel: "Completed",
     devButton: "Dev",
   },
   inProgressPage: {
@@ -17,6 +18,7 @@ export const uiText = {
     emptyTitle: "No in-progress stories yet",
     emptyDescription: "Start reading a story to see it appear in this list.",
     tryOneMoreTime: "Try one more time",
+    resetSuggestions: "Reset",
   },
   devPage: {
     backToApp: "Back to App",
@@ -62,7 +64,8 @@ export const uiText = {
     resetFilters: "Reset Filters",
   },
   storyReader: {
-    backToStories: "Back to Stories",
+    backToStories: "Back",
+    endStory: "End",
     decreaseFontSizeAriaLabel: "decrease font size",
     increaseFontSizeAriaLabel: "increase font size",
     showTranslationsAriaLabel: "show sentence translation",
